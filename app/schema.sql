@@ -1,18 +1,38 @@
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS task;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS board_users;
+DROP TABLE IF EXISTS boards;
 
-CREATE TABLE user (
+CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
   hashed_password TEXT NOT NULL
 );
 
-CREATE TABLE task (
+CREATE TABLE boards (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  owner_id INTEGER NOT NULL,
+  FOREIGN KEY (owner_id) REFERENCES users(id)
+);
+
+CREATE TABLE board_users (
   user_id INTEGER NOT NULL,
+  board_id INTEGER NOT NULL,
+  role TEXT NOT NULL,
+
+  PRIMARY KEY (user_id, board_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (board_id) REFERENCES boards(id)
+);
+
+CREATE TABLE tasks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  board_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   status TEXT NOT NULL,
   content TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES user (id)
+
+  FOREIGN KEY (board_id) REFERENCES boards(id)
 );
