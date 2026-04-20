@@ -12,10 +12,15 @@ def create_app():
     except FileExistsError:
         pass
 
-    from . import db
+    import app.db as db
     db.init_app(app)
 
-    from . import routes
-    app.register_blueprint(routes.bp)
+    # Register blueprints
+    from app.api import auth, board, task
+    import app.views as views
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(board.bp)
+    app.register_blueprint(task.bp)
+    app.register_blueprint(views.bp)
 
     return app
