@@ -53,7 +53,7 @@ def token_required(f):
             db = get_db()
             cursor = db.cursor()
             cursor.execute(
-                "SELECT * FROM user WHERE username = ?", (data["sub"],))
+                "SELECT * FROM users WHERE username = ?", (data["sub"],))
             current_user = cursor.fetchone()
             if current_user is None:
                 return jsonify({"message": "User not found"}), 401
@@ -109,7 +109,7 @@ def signup_post():
     cursor = db.cursor()
     try:
         cursor.execute(
-            "INSERT INTO user (username, hashed_password) VALUES (?, ?)",
+            "INSERT INTO users (username, hashed_password) VALUES (?, ?)",
             (username, hashed_password),
         )
         db.commit()
@@ -134,7 +134,7 @@ def login_post():
 
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM user WHERE username = ?", (username,))
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
 
     if not user or not verify_password(password, user["hashed_password"]):
