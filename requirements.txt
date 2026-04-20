@@ -1,1 +1,4 @@
 flask
+pwdlib[argon2]
+python-jose
+python-dotenv
