@@ -1,41 +1,12 @@
-import sqlite3
+from flask import Blueprint, g, request, jsonify, render_template, redirect, url_for, make_response, current_app
 from functools import wraps
-from flask import Flask, g, request, make_response, render_template, jsonify, redirect, url_for
 from jose import jwt, JWTError
+import sqlite3
 
+from app.db import get_db
 from app.utils.auth import create_access_token, get_password_hash, verify_password
 
-from app.config import settings
-
-app = Flask(__name__)
-
-
-app.config.from_mapping(
-    DATABASE="database.db",
-)
-
-
-def init_db():
-    conn = sqlite3.connect(app.config["DATABASE"])
-    with app.open_resource("schema.sql") as f:
-        conn.executescript(f.read().decode("utf8"))
-    conn.commit()
-    conn.close()
-
-
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(app.config["DATABASE"])
-        db.row_factory = sqlite3.Row
-    return db
-
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+bp = Blueprint('routes', __name__)
 
 
 def token_required(f):
@@ -47,8 +18,8 @@ def token_required(f):
 
         try:
             data = jwt.decode(
-                token, settings.ACCESS_TOKEN_SECRET_KEY, algorithms=[
-                    settings.ALGORITHM]
+                token, current_app.config['ACCESS_TOKEN_SECRET_KEY'], algorithms=[
+                    current_app.config['ALGORITHM']]
             )
             db = get_db()
             cursor = db.cursor()
@@ -67,35 +38,35 @@ def token_required(f):
     return decorated
 
 
-@app.route("/health")
+@bp.route("/health")
 def health():
     return "OK"
 
 
-@app.route("/")
+@bp.route("/")
 def index():
     return render_template("index.html")
 
 
-@app.route("/profile")
+@bp.route("/profile")
 @token_required
 def profile():
     username = g.current_user["username"]
     return f"Hello, {username}!"
 
 
-@app.route("/board")
+@bp.route("/boards")
 @token_required
-def board():
-    return render_template("board.html")
+def boards():
+    return render_template("boards.html")
 
 
-@app.route("/signup")
+@bp.route("/signup")
 def signup():
     return render_template("signup.html")
 
 
-@app.route("/signup", methods=["POST"])
+@bp.route("/signup", methods=["POST"])
 def signup_post():
     username = request.form.get("username")
     password = request.form.get("password")
@@ -116,15 +87,15 @@ def signup_post():
     except sqlite3.IntegrityError:
         return "Username already exists", 409
 
-    return redirect(url_for("login"))
+    return redirect(url_for("routes.login"))
 
 
-@app.route("/login")
+@bp.route("/login")
 def login():
     return render_template("login.html")
 
 
-@app.route("/login", methods=["POST"])
+@bp.route("/login", methods=["POST"])
 def login_post():
     username = request.form.get("username")
     password = request.form.get("password")
@@ -142,36 +113,31 @@ def login_post():
 
     access_token = create_access_token(data={"sub": user["username"]})
 
-    response = redirect(url_for("board"))
+    response = redirect(url_for("routes.boards"))
     response.set_cookie("access_token", access_token, httponly=True)
     return response
 
 
-@app.route("/logout")
+@bp.route("/logout")
 def logout():
-    response = make_response(redirect(url_for("index")))
+    response = make_response(redirect(url_for("routes.index")))
     response.set_cookie("access_token", "", expires=0)
     return response
 
 
-@app.route("/api/task/create", methods=["POST"])
+@bp.route("/api/task/create", methods=["POST"])
 @token_required
 def create_task():
     return
 
 
-@app.route("/api/task/update", methods=["POST"])
+@bp.route("/api/task/update", methods=["POST"])
 @token_required
 def update_task():
     return
 
 
-@app.route("/api/task/delete", methods=["POST"])
+@bp.route("/api/task/delete", methods=["POST"])
 @token_required
 def delete_task():
     return
-
-
-if __name__ == "__main__":
-    init_db()
-    app.run()

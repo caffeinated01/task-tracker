@@ -9,5 +9,6 @@ pip install -r requirements.txt
 # running
 
 ```
-python -m app.main
+flask init-db
+flask run
 ```
