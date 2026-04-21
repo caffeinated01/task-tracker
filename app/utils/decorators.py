@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 from app.db import get_db
 
 
-def token_required(f):
+def access_token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.cookies.get("access_token")
@@ -20,7 +20,7 @@ def token_required(f):
             db = get_db()
             cursor = db.cursor()
             cursor.execute(
-                "SELECT * FROM users WHERE username = ?", (data["sub"],))
+                "SELECT * FROM users WHERE id = ?", (data["sub"],))
             current_user = cursor.fetchone()
             if current_user is None:
                 return jsonify({"message": "User not found"}), 401

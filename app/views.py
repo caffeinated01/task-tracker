@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, g
-from app.utils.decorators import token_required
+from app.utils.decorators import access_token_required
 
 bp = Blueprint('views', __name__)
 
@@ -15,14 +15,14 @@ def health():
 
 
 @bp.route("/profile")
-@token_required
+@access_token_required
 def profile():
     username = g.current_user["username"]
     return f"Hello, {username}!"
 
 
 @bp.route("/boards")
-@token_required
+@access_token_required
 def boards():
     return render_template("boards.html")
 

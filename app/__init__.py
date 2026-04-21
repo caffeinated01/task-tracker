@@ -5,17 +5,18 @@ from flask import Flask
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    app.config.from_object('app.config.Config')
+    app.config.from_object('app.config.Config')  # config
 
     try:
+        # make instance folder for deployment files
         os.makedirs(app.instance_path)
     except FileExistsError:
         pass
 
     import app.db as db
-    db.init_app(app)
+    db.init_app(app)  # initialise database
 
-    # Register blueprints
+    # register routes from various route groups
     from app.api import auth, board, task
     import app.views as views
     app.register_blueprint(auth.bp)
