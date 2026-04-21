@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, g
-from app.utils.decorators import access_token_required
+from flask import Blueprint, render_template
 
 bp = Blueprint('views', __name__)
 
@@ -14,17 +13,14 @@ def health():
     return "OK"
 
 
-@bp.route("/profile")
-@access_token_required
-def profile():
-    username = g.current_user["username"]
-    return f"Hello, {username}!"
-
-
 @bp.route("/boards")
-@access_token_required
 def boards():
     return render_template("boards.html")
+
+
+@bp.route("/board/<int:board_id>")
+def board(board_id):
+    return render_template("board.html", board_id=board_id)
 
 
 @bp.route("/signup")

@@ -1,8 +1,14 @@
-from flask import Blueprint
+from flask import Blueprint, g, jsonify
 
 from app.utils.decorators import access_token_required
 
 bp = Blueprint('board', __name__, url_prefix='/api/board')
+
+
+@bp.route("/fetch", methods=["GET"])
+@access_token_required
+def fetch_boards():
+    return jsonify({"boards": ["1", "2", "3"]})  # placeholder
 
 
 @bp.route("/create", methods=["POST"])
