@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def create_board(db: sqlite3.Connection, name, owner_id):
+def store_board(db: sqlite3.Connection, name, owner_id):
     cursor = db.execute(
         "INSERT INTO boards (name, owner_id) VALUES (?, ?)", (name, owner_id))
     db.commit()

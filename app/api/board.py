@@ -2,7 +2,7 @@ from flask import Blueprint, g, jsonify
 
 from app.db import get_db
 from app.utils.decorators import access_token_required, json_required
-from app.crud.board import create_board, get_boards_for_user, get_board_by_id_for_user
+from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user
 
 bp = Blueprint('board', __name__, url_prefix='/api/board')
 
@@ -28,7 +28,7 @@ def create_board(data):
         return jsonify({"message": "Missing name"}), 400
 
     db = get_db()
-    board_id = create_board(db, board_name, user_id)
+    board_id = store_board(db, board_name, user_id)
     return jsonify({"id": board_id, "name": board_name}), 201
 
 
@@ -42,7 +42,7 @@ def fetch_board(id):
 
     if not board:
         return jsonify({"message": "Board not found"}), 404
-    
+
     return jsonify(board)
 
 
