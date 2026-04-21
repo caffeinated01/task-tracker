@@ -28,7 +28,7 @@ def signup():
     except sqlite3.IntegrityError:
         return "Username already exists", 409
 
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("views.login"))
 
 
 @bp.route("/login", methods=["POST"])
