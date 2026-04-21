@@ -1,19 +1,21 @@
 from datetime import timedelta
 
-from flask import Blueprint, current_app, jsonify, request, redirect, url_for, make_response
+from flask import Blueprint, current_app, jsonify, request
 
 from app.crud.token import revoke_refresh_token, rotate_refresh_token, store_refresh_token
 from app.crud.user import create_user, get_user_by_username
 from app.db import get_db
 from app.utils.auth import create_access_token, get_password_hash, verify_password
+from app.utils.decorators import json_required
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 
 @bp.route("/signup", methods=["POST"])
-def signup():
-    username = request.form.get("username")
-    password = request.form.get("password")
+@json_required
+def signup(data):
+    username = data.get("username")
+    password = data.get("password")
 
     if not username or not password:
         return "Missing username or password", 400
@@ -27,13 +29,15 @@ def signup():
 
     create_user(db, username, hashed_password)
 
-    return redirect(url_for("views.login"))
+    response = jsonify({"message": "Signup successful"})
+    return response
 
 
 @bp.route("/login", methods=["POST"])
-def login():
-    username = request.form.get("username")
-    password = request.form.get("password")
+@json_required
+def login(data):
+    username = data.get("username")
+    password = data.get("password")
 
     if not username or not password:
         return "Missing username or password", 400
@@ -48,7 +52,10 @@ def login():
     access_token = create_access_token(data={"sub": str(user["id"])})
     refresh_token = store_refresh_token(db, user)
 
-    response = redirect(url_for("views.boards"))
+    response = jsonify({
+        "message": "Login successful",
+        "user": {"id": user["id"], "username": user["username"]}
+    })
     response.set_cookie("access_token", access_token, httponly=True)
     response.set_cookie("refresh_token", refresh_token, httponly=True)
     return response
@@ -89,7 +96,7 @@ def logout():
 
     revoke_refresh_token(db, refresh_token)
 
-    response = make_response(redirect(url_for("views.index")))
+    response = jsonify({"message": "Logout successful"})
     response.set_cookie("access_token", "", expires=0)
     response.set_cookie("refresh_token", "", expires=0)
     return response

@@ -32,3 +32,14 @@ def access_token_required(f):
 
         return f(*args, **kwargs)
     return decorated
+
+
+def json_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        data = request.get_json()
+        if not data:
+            return jsonify({"message": "Invalid JSON"}), 400
+
+        return f(data, *args, **kwargs)
+    return decorated

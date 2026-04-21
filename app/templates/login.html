@@ -7,7 +7,7 @@
   </head>
   <body>
     <h1>Login</h1>
-    <form method="post" action="{{ url_for('auth.login') }}">
+    <form id="login-form">
       <label for="username">Username</label>
       <input type="text" name="username" id="username" required />
       <br />
@@ -16,5 +16,35 @@
       <br />
       <button type="submit">Login</button>
     </form>
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const response = await fetch('{{ url_for("auth.login") }}', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              window.location.href = '{{ url_for("views.boards") }}';
+            } else {
+              console.error(data.message);
+            }
+          } catch (error) {
+            console.error(data.message);
+          }
+        });
+    </script>
   </body>
 </html>
