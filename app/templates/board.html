@@ -3,14 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="{{ url_for('static', filename='base.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='board.css') }}"
-      rel="stylesheet"
-    />
+    <link href="../static/base.css" rel="stylesheet" />
+    <link href="../static/board_disp.css" rel="stylesheet" />
     <title>Task Tracker</title>
   </head>
   <body>
@@ -24,67 +18,23 @@
           <div class="flex-status">
             <div class="status-head">
               <h2>Pending</h2>
+              Sort by:
             </div>
             <div class="status-list">
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
+              <div class="task" draggable="true">
+                <h3 draggable="false">Task 1</h3>
+                <p class="task-desc" draggable="false">a<br>b<br>c</p>
+                <small draggable="false">among</small>
               </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
+              <div class="task" draggable="true">
+                <h3 draggable="false">Task 2</h3>
+                <p class="task-desc" draggable="false">d<br>e</p>
+                <small draggable="false">among</small>
               </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
-              </div>
-              <div class="task">
-                <h3>Title</h3>
-                <p class="task-desc">Description</p>
-                <small>among</small>
+              <div class="task" draggable="true">
+                <h3 draggable="false">Task 3</h3>
+                <p class="task-desc" draggable="false">Description</p>
+                <small draggable="false">among</small>
               </div>
             </div>
           </div>
@@ -93,42 +43,14 @@
           <div class="flex-status">
             <div class="status-head">
               <h2>In progress</h2>
+              Sort by:
             </div>
             <div class="status-list">
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
-              b<br />
+              <div class="task" draggable="true">
+                <h3 draggable="false">Task 4</h3>
+                <p class="task-desc" draggable="false">Description</p>
+                <small draggable="false">among</small>
+              </div>
             </div>
           </div>
         </div>
@@ -136,11 +58,24 @@
           <div class="flex-status">
             <div class="status-head">
               <h2>Done</h2>
+              Sort by:
             </div>
-            <div class="status-list">hello</div>
+            <div class="status-list">
+              <div class="task" draggable="true">
+                <h3 draggable="false">Task 5</h3>
+                <p class="task-desc" draggable="false">Description</p>
+                <small draggable="false">among</small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="hover-preview">
+      <div class="hover-preview-inner">
+        <h3>Set status to "blah"</h3>
+      </div>
+    </div>
+    <script src="../static/board_disp.js"></script>
   </body>
 </html>
