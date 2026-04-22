@@ -1,50 +1,46 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-  </head>
-  <body>
-    <h1>Login</h1>
-    <form id="login-form">
-      <label for="username">Username</label>
-      <input type="text" name="username" id="username" required />
-      <br />
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" required />
-      <br />
-      <button type="submit">Login</button>
-    </form>
-    <script>
-      document
-        .getElementById("login-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
+{% extends "base.html" %} 
 
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
+{% block content %}
+<h1>Login</h1>
+<form id="login-form">
+  <label for="username">Username</label>
+  <input type="text" name="username" id="username" required />
+  <br />
+  <label for="password">Password</label>
+  <input type="password" name="password" id="password" required />
+  <br />
+  <button type="submit">Login</button>
+</form>
+{% endblock %}
 
-          try {
-            const response = await fetch('{{ url_for("auth.login") }}', {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ username, password }),
-            });
+{% block scripts %}
+<script>
+  document
+    .getElementById("login-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-            const data = await response.json();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-            if (response.ok) {
-              window.location.href = '{{ url_for("views.boards") }}';
-            } else {
-              console.error(data.message);
-            }
-          } catch (error) {
-            console.error(data.message);
-          }
+      try {
+        const response = await fetch('{{ url_for("auth.login") }}', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
         });
-    </script>
-  </body>
-</html>
+
+        if (response.ok) {
+          window.location.href = '{{ url_for("views.boards") }}';
+        } else {
+          const data = await response.json();
+          console.error(data.message);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    });
+</script>
+{% endblock %}
