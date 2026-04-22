@@ -56,8 +56,10 @@ def login(data):
         "message": "Login successful",
         "user": {"id": user["id"], "username": user["username"]}
     })
-    response.set_cookie("access_token", access_token, httponly=True)
-    response.set_cookie("refresh_token", refresh_token, httponly=True)
+    response.set_cookie("access_token", access_token,
+                        httponly=True, samesite="Lax")
+    response.set_cookie("refresh_token", refresh_token,
+                        httponly=True, samesite="Lax")
     return response
 
 
@@ -79,8 +81,10 @@ def refresh_access_token():
     )
 
     response = jsonify({"access_token": new_access_token})
-    response.set_cookie("access_token", new_access_token, httponly=True)
-    response.set_cookie("refresh_token", new_refresh_token, httponly=True)
+    response.set_cookie("access_token", new_access_token,
+                        httponly=True, samesite="Lax")
+    response.set_cookie("refresh_token", new_refresh_token,
+                        httponly=True, samesite="Lax")
 
     return response
 
@@ -97,6 +101,6 @@ def logout():
     revoke_refresh_token(db, refresh_token)
 
     response = jsonify({"message": "Logout successful"})
-    response.set_cookie("access_token", "", expires=0)
-    response.set_cookie("refresh_token", "", expires=0)
+    response.set_cookie("access_token", "", expires=0, samesite="Lax")
+    response.set_cookie("refresh_token", "", expires=0, samesite="Lax")
     return response
