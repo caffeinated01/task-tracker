@@ -5,8 +5,8 @@ from flask import Blueprint, current_app, jsonify, request
 from app.crud.token import revoke_refresh_token, rotate_refresh_token, store_refresh_token
 from app.crud.user import create_user, get_user_by_username
 from app.db import get_db
-from app.utils.auth import create_access_token, get_password_hash, verify_password
 from app.utils.decorators import json_required
+from app.utils.auth import create_access_token, get_password_hash, verify_password
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -62,7 +62,7 @@ def login(data):
 
 
 @bp.route("/refresh", methods=["POST"])
-def refresh_accesss_token():
+def refresh_access_token():
     refresh_token = request.cookies.get("refresh_token")
 
     if not refresh_token:
