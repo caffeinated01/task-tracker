@@ -12,10 +12,8 @@ async function fetchWithAuth(url, options = {}) {
       }
     }
     return res;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }
-
-export { fetchWithAuth };

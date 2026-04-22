@@ -1,14 +1,14 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="../static/base.css" rel="stylesheet" />
-    <link href="../static/board_disp.css" rel="stylesheet" />
-    <title>Task Tracker</title>
-  </head>
-  <body>
-    <div class="flex-base">
+{% extends "base.html" %} 
+
+{% block css %}
+<link
+  href="{{ url_for('static', filename='board_disp.css') }}"
+  rel="stylesheet"
+/>
+{% endblock %} 
+
+{% block content %}
+<div class="flex-base">
       <div class="base header">
         <h2 class="header-title">Boards</h2>
         <button class="return-button" onclick="window.location.pathname = '/boards'">Return to home</button>
@@ -81,6 +81,8 @@
         <h3>Set status to "blah"</h3>
       </div>
     </div>
-    <script src="../static/board_disp.js"></script>
-  </body>
-</html>
+{% endblock %} 
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='board_disp.js') }}"></script>
+{% endblock %}
