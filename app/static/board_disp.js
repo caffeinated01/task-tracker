@@ -23,6 +23,7 @@ document.addEventListener("dragstart", (e) => {
     previewOffset.y = e.clientY - elementRect.top;
 
     document.body.appendChild(preview);
+    e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setDragImage(emptyImg, 0, 0);
 })
 
@@ -44,6 +45,9 @@ document.addEventListener("dragover", (e) => {
         preview.querySelector('h3').textContent = "Set status to \"" + previewOffset.originalStatus + "\"";
         preview.style.opacity = '0.5';
     }
+
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move';
     // console.log(e.target.closest('.flex-status'));
 });
 
