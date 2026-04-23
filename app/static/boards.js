@@ -16,7 +16,7 @@ async function fetchAndDisplayBoards() {
     }
 
     const ul = document.createElement("ul");
-    boards.forEach((board) => {
+    for (const board of boards) {
       const li = document.createElement("li");
       const a = document.createElement("a");
       a.href = `/boards/${board.id}`;
@@ -42,8 +42,13 @@ async function fetchAndDisplayBoards() {
         li.appendChild(shareForm);
       }
 
+      const userList = document.createElement("div");
+      userList.classList.add("user-list");
+      li.appendChild(userList);
+      await fetchAndDisplayUsers(board.id, userList, board.role === "owner");
+
       ul.appendChild(li);
-    });
+    }
     boardsContainer.appendChild(ul);
 
     document.querySelectorAll(".share-form").forEach((form) => {
@@ -63,10 +68,15 @@ async function fetchAndDisplayBoards() {
 
           const result = await response.json();
           if (response.ok) {
-            alert(result.message);
             e.target.querySelector("input").value = "";
+            const userListDiv = e.target
+              .closest("li")
+              .querySelector(".user-list");
+            const boardResponse = await fetchWithAuth(`/api/boards/${boardId}`);
+            const board = await boardResponse.json();
+            fetchAndDisplayUsers(boardId, userListDiv, board.role === "owner");
           } else {
-            alert(`Error sharing board: ${result.message}`);
+            console.error(`Error sharing board: ${result.message}`);
           }
         } catch (error) {
           console.error("Error sharing board:", error);
@@ -76,6 +86,57 @@ async function fetchAndDisplayBoards() {
   } catch (error) {
     console.error("Error fetching boards:", error);
     boardsContainer.innerHTML = "<p>Error loading boards</p>";
+  }
+}
+
+async function fetchAndDisplayUsers(boardId, container, isOwner) {
+  try {
+    const response = await fetchWithAuth(`/api/boards/${boardId}/users`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
+    }
+    const users = await response.json();
+
+    container.innerHTML = "Users: ";
+    const userList = document.createElement("ul");
+    users.forEach((user) => {
+      const userItem = document.createElement("li");
+      userItem.textContent = `${user.username} (${user.role})`;
+
+      if (isOwner && user.role !== "owner") {
+        const revokeButton = document.createElement("button");
+        revokeButton.textContent = "Revoke";
+        revokeButton.onclick = () => revokeAccess(boardId, user, container);
+        userItem.appendChild(revokeButton);
+      }
+      userList.appendChild(userItem);
+    });
+    container.appendChild(userList);
+  } catch (error) {
+    console.error(`Error fetching users for board ${boardId}:`, error);
+    container.innerHTML = "<p>Error loading users</p>";
+  }
+}
+
+async function revokeAccess(boardId, user, container) {
+  try {
+    const response = await fetchWithAuth(
+      `/api/boards/${boardId}/revoke/${user.id}`,
+      {
+        method: "POST",
+      },
+    );
+
+    const result = await response.json();
+    if (response.ok) {
+      const boardResponse = await fetchWithAuth(`/api/boards/${boardId}`);
+      const board = await boardResponse.json();
+      fetchAndDisplayUsers(boardId, container, board.role === "owner");
+    } else {
+      console.error(`Error revoking access: ${result.message}`);
+    }
+  } catch (error) {
+    console.error("Error revoking access:", error);
   }
 }
 

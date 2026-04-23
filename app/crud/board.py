@@ -52,3 +52,23 @@ def add_user_to_board(db: sqlite3.Connection, board_id, user_id, role="member"):
     db.execute("INSERT INTO board_users (user_id, board_id, role) VALUES (?, ?, ?)",
                (user_id, board_id, role))
     db.commit()
+
+
+def remove_user_from_board(db: sqlite3.Connection, board_id, user_id):
+    cursor = db.cursor()
+    cursor.execute(
+        "DELETE FROM board_users WHERE board_id = ? AND user_id = ?", (board_id, user_id))
+    db.commit()
+
+
+def get_users_for_board(db: sqlite3.Connection, board_id):
+    users = db.execute(
+        """
+        SELECT u.id, u.username, bu.role
+        FROM users u
+        JOIN board_users bu ON u.id = bu.user_id
+        WHERE bu.board_id = ?
+        """, (board_id,)
+    ).fetchall()
+
+    return [dict(user) for user in users]

@@ -1,6 +1,4 @@
-{% extends "base.html" %}
-
-{% block css %} {% endblock %}
+{% extends "base.html" %} 
 
 {% block content %}
 <h1>Your Boards</h1>
@@ -11,6 +9,21 @@
   <input type="text" id="board-name" placeholder="New board name" required />
   <button type="submit">Create</button>
 </form>
+
+<style>
+  .user-list ul {
+    display: inline-flex;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 10px;
+  }
+  .user-list li {
+    margin-right: 10px;
+    background-color: #f0f0f0;
+    padding: 5px;
+    border-radius: 3px;
+  }
+</style>
 {% endblock %} 
 
 {% block scripts %}
