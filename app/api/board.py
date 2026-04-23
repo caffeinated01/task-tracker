@@ -59,7 +59,7 @@ def update_board(id, data):
         return jsonify({"message": "Missing name"}), 400
 
     db = get_db()
-    
+
     board = get_board_by_id_for_user(db, id, user_id)
 
     if not board:
@@ -127,7 +127,7 @@ def create_task_for_board(id, data):
 
     task_id = store_task(db, title, status, content, id, user_id)
 
-    return {"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}, 201
+    return jsonify({"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}), 201
 
 
 @bp.route("/<int:id>/share", methods=["POST"])
