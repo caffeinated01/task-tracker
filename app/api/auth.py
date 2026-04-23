@@ -18,18 +18,18 @@ def signup(data):
     password = data.get("password")
 
     if not username or not password:
-        return "Missing username or password", 400
+        return jsonify({"message": "Missing username or password"}), 400
 
     db = get_db()
 
     if get_user_by_username(db, username):
-        return "Username already exists", 409
+        return jsonify({"message": "Username already exists"}), 409
 
     hashed_password = get_password_hash(password)
 
     create_user(db, username, hashed_password)
 
-    response = jsonify({"message": "Signup successful"})
+    response = jsonify({"message": "Signup successful"}), 201
     return response
 
 
@@ -40,14 +40,14 @@ def login(data):
     password = data.get("password")
 
     if not username or not password:
-        return "Missing username or password", 400
+        return jsonify({"message": "Missing username or password"}), 400
 
     db = get_db()
 
     user = get_user_by_username(db, username)
 
     if not user or not verify_password(password, user["hashed_password"]):
-        return "Incorrect username or password", 401
+        return jsonify({"message": "Incorrect username or password"}), 401
 
     access_token = create_access_token(data={"sub": str(user["id"])})
     refresh_token = store_refresh_token(db, user)
@@ -68,7 +68,7 @@ def refresh_access_token():
     refresh_token = request.cookies.get("refresh_token")
 
     if not refresh_token:
-        return "Refresh token is missing!", 401
+        return jsonify({"message": "Refresh token is missing!"}), 401
 
     db = get_db()
 
@@ -94,7 +94,7 @@ def logout():
     refresh_token = request.cookies.get("refresh_token")
 
     if not refresh_token:
-        return "Refresh token is missing!", 401
+        return jsonify({"message": "Refresh token is missing!"}), 401
 
     db = get_db()
 

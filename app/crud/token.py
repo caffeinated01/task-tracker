@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from flask import abort
+from flask import abort, make_response, jsonify
 
 from app.utils.auth import create_refresh_token, decode_refresh_token
 
@@ -28,15 +28,15 @@ def rotate_refresh_token(db: sqlite3.Connection, refresh_token):
     data = decode_refresh_token(refresh_token)
 
     if not data:
-        abort(401, description="Could not validate credentials")  # invalid token
+        # invalid token
+        abort(make_response(jsonify(message="Could not validate credentials"), 401))
 
     token = cursor.execute(
         "SELECT * FROM refresh_tokens WHERE token = ?", (refresh_token,)).fetchone()
 
-
     if not token or token["revoked_at"] is not None:
         # no token found or token revoked
-        abort(401, description="Could not validate credentials")
+        abort(make_response(jsonify(message="Could not validate credentials"), 401))
 
     token_expires_at = token["expires_at"]
 
@@ -44,8 +44,8 @@ def rotate_refresh_token(db: sqlite3.Connection, refresh_token):
         token_expires_at = token_expires_at.replace(tzinfo=timezone.utc)
 
     if token_expires_at < datetime.now(timezone.utc):
-        abort(401, description="Could not validate credentials")  # token expired
-
+        # token expired
+        abort(make_response(jsonify(message="Could not validate credentials"), 401))
 
     revoke_refresh_token(db, refresh_token)
 
@@ -54,7 +54,8 @@ def rotate_refresh_token(db: sqlite3.Connection, refresh_token):
         "SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
 
     if not user:
-        abort(401, description="Could not validate credentials")  # user not found
+        # user not found
+        abort(make_response(jsonify(message="Could not validate credentials"), 401))
 
     new_refresh_token = store_refresh_token(db, user)
 
@@ -71,7 +72,7 @@ def revoke_refresh_token(db: sqlite3.Connection, refresh_token):
 
     if not token or token["revoked_at"] is not None:
         # no token found or token revoked
-        abort(401, description="Could not validate credentials")
+        abort(make_response(jsonify(message="Could not validate credentials"), 401))
 
     revoked_at = datetime.now(timezone.utc)
     cursor.execute("UPDATE refresh_tokens SET revoked_at = ? WHERE id = ?",
