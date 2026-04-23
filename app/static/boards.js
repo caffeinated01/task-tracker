@@ -2,7 +2,7 @@ const boardsContainer = document.getElementById("boards-container");
 
 async function fetchAndDisplayBoards() {
   try {
-    const response = await fetchWithAuth("/api/board/boards");
+    const response = await fetchWithAuth("/api/boards");
     if (!response.ok) {
       throw new Error("Failed to fetch boards");
     }
@@ -37,7 +37,7 @@ document
     e.preventDefault();
     const boardName = document.getElementById("board-name").value;
     try {
-      const response = await fetchWithAuth("/api/board/create", {
+      const response = await fetchWithAuth("/api/boards", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
