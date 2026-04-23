@@ -19,12 +19,60 @@ async function fetchAndDisplayBoards() {
     boards.forEach((board) => {
       const li = document.createElement("li");
       const a = document.createElement("a");
-      a.href = `/board/${board.id}`;
+      a.href = `/boards/${board.id}`;
       a.textContent = board.name;
       li.appendChild(a);
+
+      if (board.role === "owner") {
+        const shareForm = document.createElement("form");
+        shareForm.classList.add("share-form");
+        shareForm.dataset.boardId = board.id;
+
+        const usernameInput = document.createElement("input");
+        usernameInput.type = "text";
+        usernameInput.placeholder = "Username to share with";
+        usernameInput.required = true;
+
+        const shareButton = document.createElement("button");
+        shareButton.type = "submit";
+        shareButton.textContent = "Share";
+
+        shareForm.appendChild(usernameInput);
+        shareForm.appendChild(shareButton);
+        li.appendChild(shareForm);
+      }
+
       ul.appendChild(li);
     });
     boardsContainer.appendChild(ul);
+
+    document.querySelectorAll(".share-form").forEach((form) => {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const boardId = e.target.dataset.boardId;
+        const username = e.target.querySelector("input").value;
+
+        try {
+          const response = await fetchWithAuth(`/api/boards/${boardId}/share`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username }),
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message);
+            e.target.querySelector("input").value = "";
+          } else {
+            alert(`Error sharing board: ${result.message}`);
+          }
+        } catch (error) {
+          console.error("Error sharing board:", error);
+        }
+      });
+    });
   } catch (error) {
     console.error("Error fetching boards:", error);
     boardsContainer.innerHTML = "<p>Error loading boards</p>";

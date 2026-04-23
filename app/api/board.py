@@ -2,8 +2,9 @@ from flask import Blueprint, g, jsonify, request
 
 from app.db import get_db
 from app.utils.decorators import access_token_required, json_required
-from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user, check_user_in_board
+from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user, check_user_in_board, add_user_to_board
 from app.crud.task import get_tasks_for_board, store_task
+from app.crud.user import get_user_by_username
 
 bp = Blueprint('board', __name__, url_prefix='/api/boards')
 
@@ -67,7 +68,7 @@ def create_task_for_board(id, data):
     db = get_db()
 
     if check_user_in_board(db, id, user_id):
-        return jsonify({"message": "User does not have access to this board"}), 403
+        return jsonify({"message": "You don't have access to this board"}), 403
 
     title, status, content = data.get(
         "title"), data.get("status"), data.get("content")
@@ -84,13 +85,53 @@ def create_task_for_board(id, data):
     return {"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}, 201
 
 
-@bp.route("/", methods=["PATCH"])
+@bp.route("/<int:id>", methods=["PATCH"])
 @access_token_required
-def update_board():
+@json_required
+def update_board(id, data):
     return
 
 
-@bp.route("/", methods=["DELETE"])
+@bp.route("/<int:id>", methods=["DELETE"])
 @access_token_required
-def delete_board():
+@json_required
+def delete_board(id, data):
     return
+
+
+@bp.route("/<int:id>/share", methods=["POST"])
+@access_token_required
+@json_required
+def share_board(id, data):
+    user_id = g.current_user["id"]
+    db = get_db()
+
+    board = get_board_by_id_for_user(db, id, user_id)
+
+    if not board:
+        return jsonify({"message": "You don't have access to this board"}), 404
+
+    if board["role"] != "owner":
+        return jsonify({"message": "Only the owner of the board can share"}), 403
+
+    username_to_share_with = data.get("username")
+
+    if not username_to_share_with:
+        return jsonify({"message": "Missing username"}), 400
+
+    user_to_share_with = get_user_by_username(db, username_to_share_with)
+
+    if not user_to_share_with:
+        return jsonify({"message": f"User '{username_to_share_with}' not found"}), 404
+
+    user_id_to_share_with = user_to_share_with["id"]
+
+    if user_id_to_share_with == user_id:
+        return jsonify({"message": "Can't share board with yourself"}), 400
+
+    if check_user_in_board(db, id, user_id_to_share_with):
+        return jsonify({"message": f"Board is already shared with {username_to_share_with}"}), 409
+
+    add_user_to_board(db, id, user_id_to_share_with)
+
+    return jsonify({"message": f"Board shared with {username_to_share_with}"}), 200

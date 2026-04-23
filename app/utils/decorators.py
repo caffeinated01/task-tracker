@@ -41,5 +41,7 @@ def json_required(f):
         if not data:
             return jsonify({"message": "Invalid JSON"}), 400
 
-        return f(data, *args, **kwargs)
+        kwargs["data"] = data  # inject data into kwargs
+
+        return f(*args, **kwargs)
     return decorated

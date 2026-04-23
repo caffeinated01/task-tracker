@@ -18,7 +18,7 @@ def boards():
     return render_template("boards.html")
 
 
-@bp.route("/board/<int:board_id>")
+@bp.route("/boards/<int:board_id>")
 def board(board_id):
     return render_template("board.html", board_id=board_id)
 
