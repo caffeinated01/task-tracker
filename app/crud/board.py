@@ -72,3 +72,13 @@ def get_users_for_board(db: sqlite3.Connection, board_id):
     ).fetchall()
 
     return [dict(user) for user in users]
+
+
+def update_board_name(db: sqlite3.Connection, board_id, name):
+    db.execute("UPDATE boards SET name = ? WHERE id = ?", (name, board_id))
+    db.commit()
+
+
+def remove_board(db: sqlite3.Connection, board_id):
+    db.execute("DELETE FROM boards WHERE id = ?", (board_id,))
+    db.commit()

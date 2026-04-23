@@ -2,7 +2,7 @@ from flask import Blueprint, g, jsonify, request
 
 from app.db import get_db
 from app.utils.decorators import access_token_required, json_required
-from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user, check_user_in_board, add_user_to_board, remove_user_from_board, get_users_for_board
+from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user, check_user_in_board, add_user_to_board, remove_user_from_board, get_users_for_board, update_board_name, remove_board
 from app.crud.task import get_tasks_for_board, store_task
 from app.crud.user import get_user_by_username, get_user_by_id
 
@@ -48,6 +48,51 @@ def fetch_board(id):
     return jsonify(board)
 
 
+@bp.route("/<int:id>", methods=["PATCH"])
+@access_token_required
+@json_required
+def update_board(id, data):
+    user_id = g.current_user["id"]
+    name = data.get("name")
+
+    if not name:
+        return jsonify({"message": "Missing name"}), 400
+
+    db = get_db()
+    
+    board = get_board_by_id_for_user(db, id, user_id)
+
+    if not board:
+        return jsonify({"message": "Board not found"}), 404
+
+    if board["role"] != "owner":
+        return jsonify({"message": "Only the owner of the board can update it"}), 403
+
+    update_board_name(db, id, name)
+
+    return jsonify({"message": "Board updated successfully"})
+
+
+@bp.route("/<int:id>", methods=["DELETE"])
+@access_token_required
+def delete_board(id):
+    user_id = g.current_user["id"]
+
+    db = get_db()
+
+    board = get_board_by_id_for_user(db, id, user_id)
+
+    if not board:
+        return jsonify({"message": "Board not found"}), 404
+
+    if board["role"] != "owner":
+        return jsonify({"message": "Only the owner of the board can delete it"}), 403
+
+    remove_board(db, id)
+
+    return jsonify({"message": "Board deleted successfully"})
+
+
 @bp.route("/<int:id>/tasks", methods=["GET"])
 @access_token_required
 def fetch_tasks_for_board(id):
@@ -85,20 +130,6 @@ def create_task_for_board(id, data):
     return {"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}, 201
 
 
-@bp.route("/<int:id>", methods=["PATCH"])
-@access_token_required
-@json_required
-def update_board(id, data):
-    return
-
-
-@bp.route("/<int:id>", methods=["DELETE"])
-@access_token_required
-@json_required
-def delete_board(id, data):
-    return
-
-
 @bp.route("/<int:id>/share", methods=["POST"])
 @access_token_required
 @json_required
@@ -113,7 +144,7 @@ def share_board(id, data):
         return jsonify({"message": "Board not found"}), 404
 
     if board["role"] != "owner":
-        return jsonify({"message": "Only the owner of the board can share"}), 403
+        return jsonify({"message": "Only the owner of the board can share it"}), 403
 
     username_to_share_with = data.get("username")
 
