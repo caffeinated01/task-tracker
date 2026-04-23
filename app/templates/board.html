@@ -9,78 +9,101 @@
 
 {% block content %}
 <div class="flex-base">
-      <div class="base header">
-        <h2 class="header-title">Boards</h2>
-        <button class="return-button" onclick="window.location.pathname = '/boards'">Return to home</button>
-      </div>
-      <div class="base board-container">
-        <div class="status">
-          <div class="flex-status">
-            <div class="status-head">
-              <h2>Pending</h2>
-              Sort by:
-            </div>
-            <div class="status-list">
-              <div class="task" draggable="true">
-                <h3 draggable="false">Task 1</h3>
-                <p class="task-desc" draggable="false">a<br>b<br>c</p>
-                <small draggable="false">among</small>
-              </div>
-              <div class="task" draggable="true">
-                <h3 draggable="false">Task 2</h3>
-                <p class="task-desc" draggable="false">d<br>e</p>
-                <small draggable="false">among</small>
-              </div>
-              <div class="task" draggable="true">
-                <h3 draggable="false">Task 3</h3>
-                <p class="task-desc" draggable="false">Description</p>
-                <small draggable="false">among</small>
-              </div>
-            </div>
-          </div>
+  <div class="base header">
+    <h2 class="header-title">Boards</h2>
+    <button class="return-button" onclick="window.location.pathname = '/boards'">Return to home</button>
+  </div>
+  <div class="base board-container">
+    <div class="status">
+      <div class="flex-status">
+        <div class="status-head">
+          <h2>Pending</h2>
+          Sort by: <select name="sort-category" id="sort-category">
+            <option value="">Name</option>
+            <option value="">Date created</option>
+            <option value="">Date updated</option>
+            <option value="">Creator</option>
+            <option value="">Importance</option>
+          </select>
+          <select name="sort-option" id="sort-option">
+            <option value="">ascending</option>
+            <option value="">descending</option>
+          </select>
         </div>
-        <div class="status">
-          <div class="flex-status">
-            <div class="status-head">
-              <h2>In progress</h2>
-              Sort by:
-            </div>
-            <div class="status-list">
-              <div class="task" draggable="true">
-                <h3 draggable="false">Task 4</h3>
-                <p class="task-desc" draggable="false">Description</p>
-                <small draggable="false">among</small>
+        <div class="status-list">
+          <div class="task" draggable="true">
+            <div class="task-header">
+              <h3 draggable="false">Task 1jfdafdlkjsaljflajflsjfldsaflkjfjdsaflksjfjdsajfjlkjslkajflkjslkjffjsalkfjs</h3>
+              <div class="option-dropdown-comp">
+                <button>Options</button>
+                <div class="option-dropdown-menu">
+                  <a>among</a>
+                  <a>among</a>
+                  <a>among</a>
+                </div>
               </div>
             </div>
+            <p class="task-desc" draggable="false">a<br>b<br>c</p>
+            <small draggable="false">among</small>
           </div>
-        </div>
-        <div class="status">
-          <div class="flex-status">
-            <div class="status-head">
-              <h2>Done</h2>
-              Sort by:
-            </div>
-            <div class="status-list">
-              <div class="task" draggable="true">
-                <h3 draggable="false">Task 5</h3>
-                <p class="task-desc" draggable="false">Description<br><br><br><br><br>Among</p>
-                <small draggable="false">among</small>
-              </div>
-              <div class="task" draggable="true">
-                <h3 draggable="false">Task 6</h3>
-                <p class="task-desc" draggable="false">a<br>a<br>a<br><br><br>a</p>
-                <small draggable="false">among</small>
-              </div>
-            </div>
+          <div class="task" draggable="true">
+            <h3 draggable="false">Task 2</h3>
+            <p class="task-desc" draggable="false">d<br>e</p>
+            <small draggable="false">among</small>
+          </div>
+          <div class="task" draggable="true">
+            <h3 draggable="false">Task 3</h3>
+            <p class="task-desc" draggable="false">Description</p>
+            <small draggable="false">among</small>
           </div>
         </div>
       </div>
     </div>
-    <div class="hover-preview">
-      <div class="hover-preview-inner">
-        <h3>Set status to "blah"</h3>
+    <div class="status">
+      <div class="flex-status">
+        <div class="status-head">
+          <h2>In progress</h2>
+          Sort by:
+        </div>
+        <div class="status-list">
+          <div class="task" draggable="true">
+            <h3 draggable="false">Task 4</h3>
+            <p class="task-desc" draggable="false">Description</p>
+            <small draggable="false">among</small>
+          </div>
+        </div>
       </div>
     </div>
+    <div class="status">
+      <div class="flex-status">
+        <div class="status-head">
+          <h2>Done</h2>
+          Sort by:
+        </div>
+        <div class="status-list">
+          <div class="task" draggable="true">
+            <h3 draggable="false">Task 5</h3>
+            <p class="task-desc" draggable="false">Description<br><br><br><br><br>Among</p>
+            <small draggable="false">among</small>
+          </div>
+          <div class="task" draggable="true">
+            <h3 draggable="false">Task 6</h3>
+            <p class="task-desc" draggable="false">a<br>a<br>a<br><br><br>a</p>
+            <small draggable="false">among</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="hover-preview">
+  <div class="hover-preview-inner">
+    <h3>Set status to "blah"</h3>
+  </div>
+</div>
+<template id="task-template">
+  
+</template>
 {% endblock %} 
 
 {% block scripts %}
