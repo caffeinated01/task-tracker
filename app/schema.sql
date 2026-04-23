@@ -39,11 +39,13 @@ CREATE TABLE board_users (
 
 CREATE TABLE tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  board_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   status TEXT NOT NULL,
   content TEXT,
+  board_id INTEGER NOT NULL,
+  created_by INTEGER NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+  FOREIGN KEY (created_by) REFERENCES users(id),
   FOREIGN KEY (board_id) REFERENCES boards(id)
 );

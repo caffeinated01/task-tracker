@@ -2,12 +2,12 @@ import sqlite3
 
 
 def store_board(db: sqlite3.Connection, name, owner_id):
-    cursor = db.execute(
+    cursor = db.cursor()
+    cursor.execute(
         "INSERT INTO boards (name, owner_id) VALUES (?, ?)", (name, owner_id))
-    db.commit()
     board_id = cursor.lastrowid  # get auto generated id from insert
-    db.execute("INSERT INTO board_users (user_id, board_id, role) VALUES (?, ?, ?)",
-               (owner_id, board_id, "owner"),)
+    cursor.execute("INSERT INTO board_users (user_id, board_id, role) VALUES (?, ?, ?)",
+                   (owner_id, board_id, "owner"),)
     db.commit()
     return board_id
 
@@ -37,3 +37,12 @@ def get_board_by_id_for_user(db: sqlite3.Connection, board_id, user_id):
     ).fetchone()
 
     return dict(board) if board else None
+
+
+def check_user_in_board(db: sqlite3.Connection, board_id, user_id):
+    membership = db.execute(
+        "SELECT * FROM board_users WHERE board_id = ? AND user_id = ?", (
+            board_id, user_id)
+    ).fetchone()
+
+    return membership is not None

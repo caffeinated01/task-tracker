@@ -1,22 +1,24 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
+
 from app.utils.decorators import access_token_required
 
-bp = Blueprint('task', __name__, url_prefix='/api/task')
+
+bp = Blueprint('task', __name__, url_prefix='/api/tasks')
 
 
-@bp.route("/create", methods=["POST"])
+@bp.route("/<int:id>", methods=["GET"])
 @access_token_required
-def create_task():
-    return jsonify({"message": "Success"})
-
-
-@bp.route("/update", methods=["POST"])
-@access_token_required
-def update_task():
+def fetch_task(id):
     return
 
 
-@bp.route("/delete", methods=["POST"])
+@bp.route("/<int:id>", methods=["PATCH"])
 @access_token_required
-def delete_task():
+def update_task(id):
+    return
+
+
+@bp.route("/<int:id>", methods=["DELETE"])
+@access_token_required
+def delete_task(id):
     return
