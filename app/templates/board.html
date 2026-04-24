@@ -30,22 +30,7 @@
             <option value="">descending</option>
           </select>
         </div>
-        <div class="status-list">
-            <div class="task" id="task_100" draggable="true">
-              <div class="task-header">
-                <h3 draggable="false">Task name</h3>
-                <div class="option-dropdown-comp" draggable="false">
-                  <button class="option-button" id="option-button" data-handler="optionbtn_100">Options</button>
-                  <div class="option-dropdown-menu" hidden>
-                    <a class="option-dropdown-select" data-handler="editbtn_100">Edit</a>
-                    <a class="option-dropdown-select" data-handler="deletebtn_100">Delete</a>
-                  </div>
-                </div>
-              </div>
-              <p class="task-desc" draggable="false">Task details</p>
-              <small draggable="false">Task description</small>
-            </div>
-        </div>
+        <div class="status-list"></div>
       </div>
     </div>
     <div class="status">
@@ -53,6 +38,17 @@
         <div class="status-head">
           <h2>In progress</h2>
           Sort by:
+          <select name="sort-category" id="sort-category">
+            <option value="">Name</option>
+            <option value="">Date created</option>
+            <option value="">Date updated</option>
+            <option value="">Creator</option>
+            <option value="">Importance</option>
+          </select>
+          <select name="sort-option" id="sort-option">
+            <option value="">ascending</option>
+            <option value="">descending</option>
+          </select>
         </div>
         <div class="status-list">
         </div>
@@ -62,7 +58,18 @@
       <div class="flex-status">
         <div class="status-head">
           <h2>Done</h2>
-          Sort by:
+          Sort by: 
+          <select name="sort-category" id="sort-category">
+            <option value="">Name</option>
+            <option value="">Date created</option>
+            <option value="">Date updated</option>
+            <option value="">Creator</option>
+            <option value="">Importance</option>
+          </select>
+          <select name="sort-option" id="sort-option">
+            <option value="">ascending</option>
+            <option value="">descending</option>
+          </select>
         </div>
         <div class="status-list">
         </div>
@@ -84,23 +91,30 @@
     <div class="modal-content">
       <p>Modal contents</p>
     </div>
+    <div class="modal-footer">
+      <button class="modal-button" data-handler="cancelmodal">Cancel</button> 
+      <button class="modal-button" data-handler="cancelmodal">Bollocks</button> 
+    </div>
   </div>
 </div>
 <template id="task-template">
-  <div class="task" id="task_9999" draggable="true">
+  <div class="task" id="task_n" draggable="true">
     <div class="task-header">
       <h3 draggable="false">Task name</h3>
-      <div class="option-dropdown-comp">
-        <button class="option-button" id="option-button">Options</button>
-        <div class="option-dropdown-menu">
-          <a id="edit">Edit</a>
-          <a id="delete">Delete</a>
+      <div class="option-dropdown-comp" draggable="false">
+        <button class="option-button" id="option-button" data-handler="optionbtn_n">Options</button>
+        <div class="option-dropdown-menu" hidden>
+          <a class="option-dropdown-select" data-handler="editbtn_n">Edit</a>
+          <a class="option-dropdown-select" data-handler="deletebtn_n">Delete</a>
         </div>
       </div>
     </div>
     <p class="task-desc" draggable="false">Task details</p>
     <small draggable="false">Task description</small>
   </div>
+</template>
+<template id="modal-button-template">
+  <button class="modal-button" data-handler="cancelmodal">Button</button> 
 </template>
 {% endblock %} 
 
