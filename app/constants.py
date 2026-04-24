@@ -10,3 +10,9 @@ class TaskStatus(IntEnum):
 class BoardRole(IntEnum):
     OWNER = 1
     EDITOR = 2
+
+
+class TaskImportance(IntEnum):
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3

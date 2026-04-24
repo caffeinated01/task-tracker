@@ -45,6 +45,7 @@ CREATE TABLE tasks (
   title TEXT NOT NULL,
   status INTEGER NOT NULL,
   content TEXT,
+  importance INTEGER NOT NULL,
   board_id TEXT NOT NULL,
   created_by TEXT NOT NULL,
   assigned_to TEXT,
