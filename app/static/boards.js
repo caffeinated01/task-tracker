@@ -73,7 +73,7 @@ async function fetchAndDisplayBoards() {
         const username = e.target.querySelector("input").value;
 
         try {
-          const response = await fetchWithAuth(`/api/boards/${boardId}/share`, {
+          const response = await fetchWithAuth(`/api/boards/${boardId}/users`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -140,9 +140,9 @@ async function fetchAndDisplayUsers(boardId, container, isOwner) {
 async function revokeAccess(boardId, user, container) {
   try {
     const response = await fetchWithAuth(
-      `/api/boards/${boardId}/revoke/${user.user_id}`,
+      `/api/boards/${boardId}/users/${user.user_id}`,
       {
-        method: "POST",
+        method: "DELETE",
       },
     );
 
