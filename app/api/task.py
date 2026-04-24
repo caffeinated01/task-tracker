@@ -1,6 +1,9 @@
-from flask import Blueprint
+from flask import Blueprint, g, jsonify
 
-from app.utils.decorators import access_token_required
+from app.db import get_db
+from app.crud.board import get_board_by_task_id_for_user, check_user_in_board
+from app.crud.task import update_task_details
+from app.utils.decorators import access_token_required, json_required
 
 
 bp = Blueprint('task', __name__, url_prefix='/api/tasks')
@@ -14,8 +17,28 @@ def fetch_task(id):
 
 @bp.route("/<int:id>", methods=["PATCH"])
 @access_token_required
-def update_task(id):
-    return
+@json_required
+def update_task(id, data):
+    user_id = g.current_user["id"]
+
+    db = get_db()
+
+    board = get_board_by_task_id_for_user(db, id, user_id)
+    board_id = board["id"]
+    board_id = 1
+
+    if not check_user_in_board(db, board_id, user_id):
+        return {"message": "You don't have access to this task"}, 400
+
+    # if field is empty then the new value will be None.
+    # we use COALESCE in update_task_details to keep the old value if the new value is None
+    new_title = data.get("title")
+    new_status = data.get("status")
+    new_content = data.get("content")
+
+    update_task_details(db, id, new_title, new_status, new_content)
+
+    return jsonify({"message": "Task updated successfully"}), 200
 
 
 @bp.route("/<int:id>", methods=["DELETE"])

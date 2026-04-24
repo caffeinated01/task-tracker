@@ -39,6 +39,21 @@ def get_board_by_id_for_user(db: sqlite3.Connection, board_id, user_id):
     return dict(board) if board else None
 
 
+def get_board_by_task_id_for_user(db: sqlite3.Connection, task_id, user_id):
+    board = db.execute(
+        """
+        SELECT b.id, b.name, bu.role
+        FROM boards b
+        JOIN board_users bu ON b.id = bu.board_id
+        JOIN tasks t ON t.board_id = b.id
+        WHERE t.id = ? AND bu.user_id = ?
+        """,
+        (task_id, user_id)
+    ).fetchone()
+
+    return dict(board) if board else None
+
+
 def check_user_in_board(db: sqlite3.Connection, board_id, user_id):
     membership = db.execute(
         "SELECT * FROM board_users WHERE board_id = ? AND user_id = ?", (
