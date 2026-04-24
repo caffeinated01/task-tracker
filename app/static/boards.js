@@ -1,5 +1,16 @@
 const boardsContainer = document.getElementById("boards-container");
 
+// placeholder code, probably fetch these from api in future
+const BoardRole = {
+  OWNER: 1,
+  EDITOR: 2,
+};
+
+const BoardRoleNames = {
+  [BoardRole.OWNER]: "Owner",
+  [BoardRole.EDITOR]: "Editor",
+};
+
 async function fetchAndDisplayBoards() {
   try {
     const response = await fetchWithAuth("/api/boards");
@@ -23,7 +34,7 @@ async function fetchAndDisplayBoards() {
       a.textContent = board.name;
       li.appendChild(a);
 
-      if (board.role === "owner") {
+      if (board.role === BoardRole.OWNER) {
         const shareForm = document.createElement("form");
         shareForm.classList.add("share-form");
         shareForm.dataset.boardId = board.board_id;
@@ -48,7 +59,7 @@ async function fetchAndDisplayBoards() {
       await fetchAndDisplayUsers(
         board.board_id,
         userList,
-        board.role === "owner"
+        board.role === BoardRole.OWNER,
       );
 
       ul.appendChild(li);
@@ -78,7 +89,11 @@ async function fetchAndDisplayBoards() {
               .querySelector(".user-list");
             const boardResponse = await fetchWithAuth(`/api/boards/${boardId}`);
             const board = await boardResponse.json();
-            fetchAndDisplayUsers(boardId, userListDiv, board.role === "owner");
+            fetchAndDisplayUsers(
+              boardId,
+              userListDiv,
+              board.role === BoardRole.OWNER,
+            );
           } else {
             console.error(`Error sharing board: ${result.message}`);
           }
@@ -105,9 +120,9 @@ async function fetchAndDisplayUsers(boardId, container, isOwner) {
     const userList = document.createElement("ul");
     users.forEach((user) => {
       const userItem = document.createElement("li");
-      userItem.textContent = `${user.username} (${user.role})`;
+      userItem.textContent = `${user.username} (${BoardRoleNames[user.role]})`;
 
-      if (isOwner && user.role !== "owner") {
+      if (isOwner && user.role !== BoardRole.OWNER) {
         const revokeButton = document.createElement("button");
         revokeButton.textContent = "Revoke";
         revokeButton.onclick = () => revokeAccess(boardId, user, container);
@@ -128,14 +143,14 @@ async function revokeAccess(boardId, user, container) {
       `/api/boards/${boardId}/revoke/${user.user_id}`,
       {
         method: "POST",
-      }
+      },
     );
 
     const result = await response.json();
     if (response.ok) {
       const boardResponse = await fetchWithAuth(`/api/boards/${boardId}`);
       const board = await boardResponse.json();
-      fetchAndDisplayUsers(boardId, container, board.role === "owner");
+      fetchAndDisplayUsers(boardId, container, board.role === BoardRole.OWNER);
     } else {
       console.error(`Error revoking access: ${result.message}`);
     }

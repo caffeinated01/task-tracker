@@ -1,5 +1,6 @@
 import sqlite3
 
+from app.constants import BoardRole
 from app.utils.id_gen import get_id_str
 
 
@@ -13,7 +14,7 @@ def store_board(db: sqlite3.Connection, name, owner_id):
             board_id, name, owner_id)
     )
     cursor.execute("INSERT INTO board_users (user_id, board_id, role) VALUES (?, ?, ?)",
-                   (owner_id, board_id, "owner"))
+                   (owner_id, board_id, BoardRole.OWNER))
     db.commit()
     return board_id
 
@@ -69,7 +70,7 @@ def check_user_in_board(db: sqlite3.Connection, board_id, user_id):
     return membership is not None
 
 
-def add_user_to_board(db: sqlite3.Connection, board_id, user_id, role="member"):
+def add_user_to_board(db: sqlite3.Connection, board_id, user_id, role=BoardRole.EDITOR):
     db.execute("INSERT INTO board_users (user_id, board_id, role) VALUES (?, ?, ?)",
                (user_id, board_id, role))
     db.commit()
@@ -85,9 +86,9 @@ def remove_user_from_board(db: sqlite3.Connection, board_id, user_id):
 def get_users_for_board(db: sqlite3.Connection, board_id):
     users = db.execute(
         """
-        SELECT u.id, u.username, bu.role
+        SELECT u.user_id, u.username, bu.role
         FROM users u
-        JOIN board_users bu ON u.id = bu.user_id
+        JOIN board_users bu ON u.user_id = bu.user_id
         WHERE bu.board_id = ?
         """, (board_id,)
     ).fetchall()
@@ -96,10 +97,14 @@ def get_users_for_board(db: sqlite3.Connection, board_id):
 
 
 def update_board_name(db: sqlite3.Connection, board_id, name):
-    db.execute("UPDATE boards SET name = ? WHERE id = ?", (name, board_id))
+    db.execute("UPDATE boards SET name = ? WHERE board_id = ?",
+               (name, board_id))
     db.commit()
 
 
 def remove_board(db: sqlite3.Connection, board_id):
-    db.execute("DELETE FROM boards WHERE id = ?", (board_id,))
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM boards WHERE board_id = ?", (board_id,))
+    cursor.execute("DELETE FROM board_users WHERE board_id = ?", (board_id,))
+    cursor.execute("DELETE FROM tasks WHERE board_id = ?", (board_id,))
     db.commit()

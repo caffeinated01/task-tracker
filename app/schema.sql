@@ -32,7 +32,7 @@ CREATE TABLE boards (
 CREATE TABLE board_users (
   user_id TEXT NOT NULL,
   board_id TEXT NOT NULL,
-  role TEXT NOT NULL,
+  role INTEGER NOT NULL,
 
   PRIMARY KEY (user_id, board_id),
   FOREIGN KEY (user_id) REFERENCES users(user_id),
@@ -43,7 +43,7 @@ CREATE TABLE tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   task_id TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
-  status TEXT NOT NULL,
+  status INTEGER NOT NULL,
   content TEXT,
   board_id TEXT NOT NULL,
   created_by TEXT NOT NULL,

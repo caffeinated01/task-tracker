@@ -2,6 +2,7 @@ from flask import Blueprint, g, jsonify, request
 
 from app.db import get_db
 from app.utils.decorators import access_token_required, json_required
+from app.constants import BoardRole
 from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user, check_user_in_board, add_user_to_board, remove_user_from_board, get_users_for_board, update_board_name, remove_board
 from app.crud.task import get_tasks_for_board, store_task
 from app.crud.user import get_user_by_username, get_user_by_id
@@ -65,7 +66,7 @@ def update_board(id, data):
     if not board:
         return jsonify({"message": "Board not found"}), 404
 
-    if board["role"] != "owner":
+    if board["role"] != BoardRole.OWNER:
         return jsonify({"message": "Only the owner of the board can update it"}), 403
 
     update_board_name(db, id, name)
@@ -85,7 +86,7 @@ def delete_board(id):
     if not board:
         return jsonify({"message": "Board not found"}), 404
 
-    if board["role"] != "owner":
+    if board["role"] != BoardRole.OWNER:
         return jsonify({"message": "Only the owner of the board can delete it"}), 403
 
     remove_board(db, id)
@@ -142,7 +143,7 @@ def share_board(id, data):
     if not board:
         return jsonify({"message": "Board not found"}), 404
 
-    if board["role"] != "owner":
+    if board["role"] != BoardRole.OWNER:
         return jsonify({"message": "Only the owner of the board can share it"}), 403
 
     username_to_share_with = data.get("username")
@@ -180,7 +181,7 @@ def revoke_board_access(id, user_id_to_revoke):
     if not board:
         return jsonify({"message": "Board not found"}), 404
 
-    if board["role"] != "owner":
+    if board["role"] != BoardRole.OWNER:
         return jsonify({"message": "Only the owner of the board can revoke access"}), 403
 
     user_to_revoke = get_user_by_id(db, user_id_to_revoke)
