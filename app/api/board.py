@@ -130,7 +130,21 @@ def create_task_for_board(id, data):
     return jsonify({"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}), 201
 
 
-@bp.route("/<string:id>/share", methods=["POST"])
+@bp.route("/<string:id>/users", methods=["GET"])
+@access_token_required
+def fetch_board_users(id):
+    user_id = g.current_user["user_id"]
+
+    db = get_db()
+
+    if not check_user_in_board(db, id, user_id):
+        return jsonify({"message": "You don't have access to this board"}), 403
+
+    users = get_users_for_board(db, id)
+    return jsonify(users)
+
+
+@bp.route("/<string:id>/users", methods=["POST"])
 @access_token_required
 @json_required
 def share_board(id, data):
@@ -169,7 +183,7 @@ def share_board(id, data):
     return jsonify({"message": f"Board shared with {username_to_share_with}"})
 
 
-@bp.route("/<string:id>/revoke/<string:user_id_to_revoke>", methods=["POST"])
+@bp.route("/<string:id>/users/<string:user_id_to_revoke>", methods=["DELETE"])
 @access_token_required
 def revoke_board_access(id, user_id_to_revoke):
     user_id = g.current_user["user_id"]
@@ -200,17 +214,3 @@ def revoke_board_access(id, user_id_to_revoke):
     remove_user_from_board(db, id, user_id_to_revoke)
 
     return jsonify({"message": f"Access revoked for {username_to_revoke}"})
-
-
-@bp.route("/<string:id>/users", methods=["GET"])
-@access_token_required
-def fetch_board_users(id):
-    user_id = g.current_user["user_id"]
-
-    db = get_db()
-
-    if not check_user_in_board(db, id, user_id):
-        return jsonify({"message": "You don't have access to this board"}), 403
-
-    users = get_users_for_board(db, id)
-    return jsonify(users)
