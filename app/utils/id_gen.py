@@ -7,7 +7,7 @@
 # Values for shift register bits sourced from here:
 # https://www.physics.otago.ac.nz/reports/electronics/ETR2012-1.pdf
 
-# Use ONLY get_next_b36_id() to generate IDs
+# Use ONLY get_id_str() to generate IDs
 
 import math
 import datetime
@@ -40,7 +40,7 @@ def conv_id_to_b36(x):
     return b36_str.zfill(10)
 
 
-def get_next_b36_id():
+def get_id_str():
     return conv_id_to_b36(get_next_id())
 
 
