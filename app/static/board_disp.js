@@ -3,11 +3,41 @@ handle general clicking on webpage, this should cover:
 *   clicking on dropdown menus (all forms)
 */
 
+function optionBtnHandle(id) {
+    var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
+    dropdownMenu.hidden = !dropdownMenu.hidden;
+}
+
+function editBtnHandle(id) {
+    var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
+    dropdownMenu.hidden = true;
+
+    document.querySelector('.modal-base').classList.remove('hidden');
+}
+
+function deleteBtnHandle(id) {
+    var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
+    dropdownMenu.hidden = true;
+}
+
+function closeModal() {
+    document.querySelector('.modal-base').classList.add('hidden');
+}
+
+var clickMap = {
+    optionbtn: optionBtnHandle,
+    editbtn: editBtnHandle,
+    deletebtn: deleteBtnHandle,
+    closemodal: closeModal
+}
+
 function clickHandle(e) {
     // https://stackoverflow.com/questions/46732637/best-way-to-handle-clicks-on-buttons-in-javascript-vanilla
     // do something similar to this for edit, dropdowns and shit
-
-    console.log(e.target.id.contains());
+    if (!e.target.dataset.handler) return;
+    handlerArgs = e.target.dataset.handler.split("_");
+    if (handlerArgs.length == 1) clickMap[handlerArgs[0]]();
+    else if (handlerArgs.length == 2) clickMap[handlerArgs[0]](handlerArgs[1]);
 }
 
 // handle dragging on webpage

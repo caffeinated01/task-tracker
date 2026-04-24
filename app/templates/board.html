@@ -31,14 +31,14 @@
           </select>
         </div>
         <div class="status-list">
-            <div class="task" id="task_9999" draggable="true">
+            <div class="task" id="task_100" draggable="true">
               <div class="task-header">
                 <h3 draggable="false">Task name</h3>
                 <div class="option-dropdown-comp" draggable="false">
-                  <button class="option-button" id="option-button">Options</button>
-                  <div class="option-dropdown-menu">
-                    <a id="edit">Edit</a>
-                    <a id="delete">Delete</a>
+                  <button class="option-button" id="option-button" data-handler="optionbtn_100">Options</button>
+                  <div class="option-dropdown-menu" hidden>
+                    <a class="option-dropdown-select" data-handler="editbtn_100">Edit</a>
+                    <a class="option-dropdown-select" data-handler="deletebtn_100">Delete</a>
                   </div>
                 </div>
               </div>
@@ -73,6 +73,17 @@
 <div class="hover-preview">
   <div class="hover-preview-inner">
     <h3>Set status to "blah"</h3>
+  </div>
+</div>
+<div class="modal-base">
+  <div class="modal-window">
+    <div class="modal-title">
+      <h3>Modal title</h3>
+      <button id="close-modal" data-handler="closemodal">Close</button>
+    </div>
+    <div class="modal-content">
+      <p>Modal contents</p>
+    </div>
   </div>
 </div>
 <template id="task-template">
