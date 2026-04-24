@@ -1,7 +1,30 @@
+// fetch board data from API
+let boardId = '';
+
+function loadAllPosts() {
+    const currentPath = window.location.pathname.split("/");
+    boardId = currentPath[currentPath.length - 1];
+    
+    try {
+        const boardContent = fetchWithAuth(`/api/boards/${boardId}/tasks`);
+        console.log(boardContent);
+    } catch (err) {
+        return;
+    }
+}
+
 /*
 handle general clicking on webpage, this should cover:
 *   clicking on dropdown menus (all forms)
+*   modal buttons
 */
+
+var clickMap = {
+    optionbtn: optionBtnHandle,
+    editbtn: editBtnHandle,
+    deletebtn: deleteBtnHandle,
+    closemodal: closeModal
+}
 
 function optionBtnHandle(id) {
     var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
@@ -18,17 +41,12 @@ function editBtnHandle(id) {
 function deleteBtnHandle(id) {
     var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
     dropdownMenu.hidden = true;
+
+    document.querySelector('.modal-base').classList.remove('hidden');
 }
 
 function closeModal() {
     document.querySelector('.modal-base').classList.add('hidden');
-}
-
-var clickMap = {
-    optionbtn: optionBtnHandle,
-    editbtn: editBtnHandle,
-    deletebtn: deleteBtnHandle,
-    closemodal: closeModal
 }
 
 function clickHandle(e) {
@@ -130,6 +148,7 @@ function dragEndHandle(e) {
 
 // connect handles
 
+document.addEventListener('DOMContentLoaded', loadAllPosts);
 document.addEventListener("dragstart", dragStartHandle);
 document.addEventListener("dragover", dragOverHandle);
 document.addEventListener("dragend", dragEndHandle);

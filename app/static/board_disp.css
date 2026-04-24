@@ -169,6 +169,7 @@ small {
     align-items: center;
     width: 100%;
     border-bottom: 2px solid #0f0;
+    padding-bottom: 5px;
 }
 
 .modal-title > * {
@@ -182,4 +183,15 @@ small {
 
 .hidden {
     display: none;
+}
+
+.modal-footer {
+    width: 100%;
+    padding-top: 5px;
+    border-top: 2px solid #0f0;
+}
+
+.modal-footer > * {
+    float: right;
+    margin-left: 5px;
 }
