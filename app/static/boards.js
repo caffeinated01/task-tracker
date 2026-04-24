@@ -19,14 +19,14 @@ async function fetchAndDisplayBoards() {
     for (const board of boards) {
       const li = document.createElement("li");
       const a = document.createElement("a");
-      a.href = `/boards/${board.id}`;
+      a.href = `/boards/${board.board_id}`;
       a.textContent = board.name;
       li.appendChild(a);
 
       if (board.role === "owner") {
         const shareForm = document.createElement("form");
         shareForm.classList.add("share-form");
-        shareForm.dataset.boardId = board.id;
+        shareForm.dataset.boardId = board.board_id;
 
         const usernameInput = document.createElement("input");
         usernameInput.type = "text";
@@ -45,7 +45,11 @@ async function fetchAndDisplayBoards() {
       const userList = document.createElement("div");
       userList.classList.add("user-list");
       li.appendChild(userList);
-      await fetchAndDisplayUsers(board.id, userList, board.role === "owner");
+      await fetchAndDisplayUsers(
+        board.board_id,
+        userList,
+        board.role === "owner"
+      );
 
       ul.appendChild(li);
     }
@@ -121,10 +125,10 @@ async function fetchAndDisplayUsers(boardId, container, isOwner) {
 async function revokeAccess(boardId, user, container) {
   try {
     const response = await fetchWithAuth(
-      `/api/boards/${boardId}/revoke/${user.id}`,
+      `/api/boards/${boardId}/revoke/${user.user_id}`,
       {
         method: "POST",
-      },
+      }
     );
 
     const result = await response.json();

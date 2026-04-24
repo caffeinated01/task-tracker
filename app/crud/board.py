@@ -1,11 +1,17 @@
 import sqlite3
 
+from app.utils.id_gen import get_id_str
+
 
 def store_board(db: sqlite3.Connection, name, owner_id):
     cursor = db.cursor()
+
+    board_id = get_id_str()
+
     cursor.execute(
-        "INSERT INTO boards (name, owner_id) VALUES (?, ?)", (name, owner_id))
-    board_id = cursor.lastrowid  # get auto generated id from insert
+        "INSERT INTO boards (board_id, name, owner_id) VALUES (?, ?, ?)", (
+            board_id, name, owner_id)
+    )
     cursor.execute("INSERT INTO board_users (user_id, board_id, role) VALUES (?, ?, ?)",
                    (owner_id, board_id, "owner"))
     db.commit()
@@ -15,9 +21,9 @@ def store_board(db: sqlite3.Connection, name, owner_id):
 def get_boards_for_user(db: sqlite3.Connection, user_id):
     boards = db.execute(
         """
-        SELECT b.id, b.name, bu.role
+        SELECT b.board_id, b.name, bu.role
         FROM boards b
-        JOIN board_users bu ON b.id = bu.board_id
+        JOIN board_users bu ON b.board_id = bu.board_id
         WHERE bu.user_id = ?
         """, (user_id,)
     ).fetchall()
@@ -28,10 +34,10 @@ def get_boards_for_user(db: sqlite3.Connection, user_id):
 def get_board_by_id_for_user(db: sqlite3.Connection, board_id, user_id):
     board = db.execute(
         """
-        SELECT b.id, b.name, bu.role
+        SELECT b.board_id, b.name, bu.role
         FROM boards b
-        JOIN board_users bu ON b.id = bu.board_id
-        WHERE b.id = ? AND bu.user_id = ?
+        JOIN board_users bu ON b.board_id = bu.board_id
+        WHERE b.board_id = ? AND bu.user_id = ?
         """,
         (board_id, user_id)
     ).fetchone()
@@ -42,11 +48,11 @@ def get_board_by_id_for_user(db: sqlite3.Connection, board_id, user_id):
 def get_board_by_task_id_for_user(db: sqlite3.Connection, task_id, user_id):
     board = db.execute(
         """
-        SELECT b.id, b.name, bu.role
+        SELECT b.board_id, b.name, bu.role
         FROM boards b
-        JOIN board_users bu ON b.id = bu.board_id
-        JOIN tasks t ON t.board_id = b.id
-        WHERE t.id = ? AND bu.user_id = ?
+        JOIN board_users bu ON b.board_id = bu.board_id
+        JOIN tasks t ON t.board_id = b.board_id
+        WHERE t.task_id = ? AND bu.user_id = ?
         """,
         (task_id, user_id)
     ).fetchone()

@@ -1,21 +1,25 @@
 import sqlite3
 
-from flask import abort, jsonify, make_response
+from app.utils.id_gen import get_id_str
 
 
 def store_task(db: sqlite3.Connection, title, status, content, board_id, user_id):
     cursor = db.cursor()
-    cursor.execute("INSERT INTO tasks (title, status, content, board_id, created_by) VALUES (?, ?, ?, ?, ?)", (
-        title, status, content, board_id, user_id),
+
+    task_id = get_id_str()
+
+    cursor.execute("INSERT INTO tasks (task_id, title, status, content, board_id, created_by) VALUES (?, ?, ?, ?, ?, ?)", (
+        task_id, title, status, content, board_id, user_id),
     )
     db.commit()
-    return cursor.lastrowid
+
+    return task_id
 
 
 def get_tasks_for_board(db: sqlite3.Connection, board_id, user_id):
     tasks = db.execute(
         """
-        SELECT t.id, t.title, t.status, t.content, t.board_id, t.created_by, t.created_at
+        SELECT t.task_id, t.title, t.status, t.content, t.board_id, t.created_by, t.created_at
         FROM tasks t
         JOIN board_users bu ON t.board_id = bu.board_id
         WHERE bu.board_id = ? AND bu.user_id = ?
@@ -33,6 +37,6 @@ def update_task_details(db: sqlite3.Connection, task_id, title=None, status=None
         """
         UPDATE tasks
         SET title = COALESCE(?, title), status = COALESCE(?, status), content = COALESCE(?, content)
-        WHERE id = ?
+        WHERE task_id = ?
     """, (title, status, content, task_id))
     db.commit()

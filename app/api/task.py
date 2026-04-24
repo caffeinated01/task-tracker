@@ -9,23 +9,22 @@ from app.utils.decorators import access_token_required, json_required
 bp = Blueprint('task', __name__, url_prefix='/api/tasks')
 
 
-@bp.route("/<int:id>", methods=["GET"])
+@bp.route("/<string:id>", methods=["GET"])
 @access_token_required
 def fetch_task(id):
     return
 
 
-@bp.route("/<int:id>", methods=["PATCH"])
+@bp.route("/<string:id>", methods=["PATCH"])
 @access_token_required
 @json_required
 def update_task(id, data):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
 
     board = get_board_by_task_id_for_user(db, id, user_id)
-    board_id = board["id"]
-    board_id = 1
+    board_id = board["board_id"]
 
     if not check_user_in_board(db, board_id, user_id):
         return {"message": "You don't have access to this task"}, 400
@@ -41,7 +40,7 @@ def update_task(id, data):
     return jsonify({"message": "Task updated successfully"}), 200
 
 
-@bp.route("/<int:id>", methods=["DELETE"])
+@bp.route("/<string:id>", methods=["DELETE"])
 @access_token_required
 def delete_task(id):
     return

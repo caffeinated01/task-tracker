@@ -49,12 +49,12 @@ def login(data):
     if not user or not verify_password(password, user["hashed_password"]):
         return jsonify({"message": "Incorrect username or password"}), 401
 
-    access_token = create_access_token(data={"sub": str(user["id"])})
+    access_token = create_access_token(data={"sub": user["user_id"]})
     refresh_token = store_refresh_token(db, user)
 
     response = jsonify({
         "message": "Login successful",
-        "user": {"id": user["id"], "username": user["username"]}
+        "user": {"id": user["user_id"], "username": user["username"]}
     })
     response.set_cookie("access_token", access_token,
                         httponly=True, samesite="Lax")
@@ -75,7 +75,7 @@ def refresh_access_token():
     new_refresh_token, user = rotate_refresh_token(db, refresh_token)
 
     new_access_token = create_access_token(
-        data={"sub": str(user["id"])},
+        data={"sub": user["user_id"]},
         expires_delta=timedelta(
             minutes=current_app.config["ACCESS_TOKEN_EXPIRE_MINUTES"])
     )

@@ -10,13 +10,13 @@ from app.utils.auth import create_refresh_token, decode_refresh_token
 
 def store_refresh_token(db: sqlite3.Connection, user):
     refresh_token, expires_at = create_refresh_token(data={
-        "sub": str(user["id"]),
+        "sub": user["user_id"],
         "jti": str(uuid4())
     })
 
     cursor = db.cursor()
     cursor.execute("INSERT INTO refresh_tokens (token, expires_at, user_id) VALUES (?, ?, ?)",
-                   (refresh_token, expires_at, user["id"]))
+                   (refresh_token, expires_at, user["user_id"]))
     db.commit()
 
     return refresh_token

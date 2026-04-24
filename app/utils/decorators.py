@@ -20,7 +20,7 @@ def access_token_required(f):
             db = get_db()
             cursor = db.cursor()
             cursor.execute(
-                "SELECT * FROM users WHERE id = ?", (data["sub"],))
+                "SELECT * FROM users WHERE user_id = ?", (data["sub"],))
             current_user = cursor.fetchone()
             if current_user is None:
                 return jsonify({"message": "User not found"}), 401

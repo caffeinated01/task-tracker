@@ -13,7 +13,7 @@ bp = Blueprint('board', __name__, url_prefix='/api/boards')
 @access_token_required
 def fetch_boards():
     db = get_db()
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     boards = get_boards_for_user(db, user_id)
     return jsonify(boards)
@@ -23,7 +23,7 @@ def fetch_boards():
 @access_token_required
 @json_required
 def create_board(data):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
     board_name = data.get("name")
 
     if not board_name:
@@ -34,10 +34,10 @@ def create_board(data):
     return jsonify({"id": board_id, "name": board_name}), 201
 
 
-@bp.route("/<int:id>", methods=["GET"])
+@bp.route("/<string:id>", methods=["GET"])
 @access_token_required
 def fetch_board(id):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
     board = get_board_by_id_for_user(db, id, user_id)
@@ -48,11 +48,11 @@ def fetch_board(id):
     return jsonify(board)
 
 
-@bp.route("/<int:id>", methods=["PATCH"])
+@bp.route("/<string:id>", methods=["PATCH"])
 @access_token_required
 @json_required
 def update_board(id, data):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
     name = data.get("name")
 
     if not name:
@@ -73,10 +73,10 @@ def update_board(id, data):
     return jsonify({"message": "Board updated successfully"})
 
 
-@bp.route("/<int:id>", methods=["DELETE"])
+@bp.route("/<string:id>", methods=["DELETE"])
 @access_token_required
 def delete_board(id):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
 
@@ -93,22 +93,21 @@ def delete_board(id):
     return jsonify({"message": "Board deleted successfully"})
 
 
-@bp.route("/<int:id>/tasks", methods=["GET"])
+@bp.route("/<string:id>/tasks", methods=["GET"])
 @access_token_required
 def fetch_tasks_for_board(id):
-    user_id = g.current_user["id"]
-
+    user_id = g.current_user["user_id"]
     db = get_db()
     tasks = get_tasks_for_board(db, id, user_id)
 
     return jsonify(tasks)
 
 
-@bp.route("/<int:id>/tasks", methods=["POST"])
+@bp.route("/<string:id>/tasks", methods=["POST"])
 @access_token_required
 @json_required
 def create_task_for_board(id, data):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
 
@@ -130,11 +129,11 @@ def create_task_for_board(id, data):
     return jsonify({"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}), 201
 
 
-@bp.route("/<int:id>/share", methods=["POST"])
+@bp.route("/<string:id>/share", methods=["POST"])
 @access_token_required
 @json_required
 def share_board(id, data):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
 
@@ -156,7 +155,7 @@ def share_board(id, data):
     if not user_to_share_with:
         return jsonify({"message": f"User not found"}), 404
 
-    user_id_to_share_with = user_to_share_with["id"]
+    user_id_to_share_with = user_to_share_with["user_id"]
 
     if user_id_to_share_with == user_id:
         return jsonify({"message": "Can't share board with yourself"}), 400
@@ -169,10 +168,10 @@ def share_board(id, data):
     return jsonify({"message": f"Board shared with {username_to_share_with}"})
 
 
-@bp.route("/<int:id>/revoke/<int:user_id_to_revoke>", methods=["POST"])
+@bp.route("/<string:id>/revoke/<string:user_id_to_revoke>", methods=["POST"])
 @access_token_required
 def revoke_board_access(id, user_id_to_revoke):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
 
@@ -202,10 +201,10 @@ def revoke_board_access(id, user_id_to_revoke):
     return jsonify({"message": f"Access revoked for {username_to_revoke}"})
 
 
-@bp.route("/<int:id>/users", methods=["GET"])
+@bp.route("/<string:id>/users", methods=["GET"])
 @access_token_required
 def fetch_board_users(id):
-    user_id = g.current_user["id"]
+    user_id = g.current_user["user_id"]
 
     db = get_db()
 
