@@ -47,8 +47,10 @@ CREATE TABLE tasks (
   content TEXT,
   board_id TEXT NOT NULL,
   created_by TEXT NOT NULL,
+  assigned_to TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY (created_by) REFERENCES users(user_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id),
   FOREIGN KEY (board_id) REFERENCES boards(board_id)
 );
