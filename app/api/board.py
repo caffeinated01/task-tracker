@@ -115,8 +115,8 @@ def create_task_for_board(id, data):
     if check_user_in_board(db, id, user_id):
         return jsonify({"message": "You don't have access to this board"}), 403
 
-    title, status, content = data.get(
-        "title"), data.get("status"), data.get("content")
+    title, status, content, assigned_to = data.get("title"), data.get(
+        "status"), data.get("content"), data.get("assigned_to")
 
     if not title:
         return jsonify({"message": "Missing title"}), 400
@@ -125,9 +125,9 @@ def create_task_for_board(id, data):
     if not content:
         return jsonify({"message": "Missing content"}), 400
 
-    task_id = store_task(db, title, status, content, id, user_id)
+    task_id = store_task(db, title, status, content, id, user_id, assigned_to)
 
-    return jsonify({"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id}), 201
+    return jsonify({"id": task_id, "title": title, "status": status, "content": content, "board_id": id, "created_by": user_id, "assigned_to": assigned_to}), 201
 
 
 @bp.route("/<string:id>/users", methods=["GET"])

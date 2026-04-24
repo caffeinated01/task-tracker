@@ -3,11 +3,11 @@ import sqlite3
 from app.utils.id_gen import get_id_str
 
 
-def store_task(db: sqlite3.Connection, title, status, content, board_id, user_id):
+def store_task(db: sqlite3.Connection, title, status, content, board_id, user_id, assigned_to=None):
     task_id = get_id_str()
 
-    db.execute("INSERT INTO tasks (task_id, title, status, content, board_id, created_by) VALUES (?, ?, ?, ?, ?, ?)", (
-        task_id, title, status, content, board_id, user_id),
+    db.execute("INSERT INTO tasks (task_id, title, status, content, board_id, created_by, assigned_to) VALUES (?, ?, ?, ?, ?, ?, ?)", (
+        task_id, title, status, content, board_id, user_id, assigned_to),
     )
     db.commit()
 
