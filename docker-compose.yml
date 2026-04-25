@@ -1,5 +1,6 @@
 services:
   web:
+    container_name: task-tracker
     build: .
     ports:
       - "8000:8000"
