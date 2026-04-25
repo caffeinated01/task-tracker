@@ -12,3 +12,9 @@ pip install -r requirements.txt
 flask init-db
 flask run
 ```
+
+use gunicorn for production:
+
+```
+gunicorn app.wsgi:app
+```
