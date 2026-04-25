@@ -1,12 +1,12 @@
 // fetch board data from API
 let boardId = '';
 
-function loadAllPosts() {
+async function loadAllPosts() {
     const currentPath = window.location.pathname.split("/");
     boardId = currentPath[currentPath.length - 1];
     
     try {
-        const boardContent = fetchWithAuth(`/api/boards/${boardId}/tasks`);
+        const boardContent = await fetchWithAuth(`/api/boards/${boardId}/tasks`).then((r) => r.json());
         console.log(boardContent);
     } catch (err) {
         return;
@@ -23,7 +23,17 @@ var clickMap = {
     optionbtn: optionBtnHandle,
     editbtn: editBtnHandle,
     deletebtn: deleteBtnHandle,
-    closemodal: closeModal
+    closemodal: closeModal,
+    submitmodal: submitModal,
+    addpost: addPostHandle
+}
+
+var updateStatus = {board: null, id: null};
+
+function addPostHandle(status) {
+    document.querySelector('.modal-base').classList.remove('hidden');
+    updateStatus.id = null;
+    updateStatus.board = parseInt(status);
 }
 
 function optionBtnHandle(id) {
@@ -34,6 +44,8 @@ function optionBtnHandle(id) {
 function editBtnHandle(id) {
     var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
     dropdownMenu.hidden = true;
+    updateStatus.id = id;
+    updateStatus.board = null;
 
     document.querySelector('.modal-base').classList.remove('hidden');
 }
@@ -49,11 +61,39 @@ function closeModal() {
     document.querySelector('.modal-base').classList.add('hidden');
 }
 
+function submitModal() {
+    var title = document.querySelector('.title-textarea').value;
+    var desc = document.querySelector('.desc-textarea').value;
+    if (title == '') return;
+
+    // only clear and close if went through
+    // update importance
+    if (updateStatus.board) {
+        fetchWithAuth(`/api/boards/${boardId}/tasks`, {
+            method: "POST",
+            body: JSON.stringify({title: title, status: updateStatus.board, content: desc, importance: 1}),
+            headers: {"Content-Type": "application/json"}
+        }).then((resp) => {
+            console.log(resp.json())
+            submitModalSuccess()
+        })
+    } else if (updateStatus.id) {
+
+    } else return;
+}
+
+function submitModalSuccess() {
+    document.querySelector('.title-textarea').value = '';
+    document.querySelector('.desc-textarea').value = '';
+    document.querySelector('.modal-base').classList.add('hidden');
+}
+
 function clickHandle(e) {
     // https://stackoverflow.com/questions/46732637/best-way-to-handle-clicks-on-buttons-in-javascript-vanilla
     // do something similar to this for edit, dropdowns and shit
     if (!e.target.dataset.handler) return;
     handlerArgs = e.target.dataset.handler.split("_");
+    if (!clickMap[handlerArgs[0]]) return;
     if (handlerArgs.length == 1) clickMap[handlerArgs[0]]();
     else if (handlerArgs.length == 2) clickMap[handlerArgs[0]](handlerArgs[1]);
 }

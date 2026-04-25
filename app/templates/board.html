@@ -14,7 +14,7 @@
     <button class="return-button" onclick="window.location.pathname = '/boards'">Return to home</button>
   </div>
   <div class="base board-container">
-    <div class="status">
+    <div class="status" id="status_1">
       <div class="flex-status">
         <div class="status-head">
           <h2>Pending</h2>
@@ -30,10 +30,18 @@
             <option value="">descending</option>
           </select>
         </div>
-        <div class="status-list"></div>
+        <div class="status-list">
+          <div class="status-addnew">
+            <button class="status-addnew-box" data-handler="addpost_1">
+              Add new task...
+            </button>
+          </div>
+          <div class="status-tasks">
+          </div>
+        </div>
       </div>
     </div>
-    <div class="status">
+    <div class="status" id="status_2">
       <div class="flex-status">
         <div class="status-head">
           <h2>In progress</h2>
@@ -51,10 +59,17 @@
           </select>
         </div>
         <div class="status-list">
+          <div class="status-addnew">
+            <button class="status-addnew-box" data-handler="addpost_2">
+              Add new task...
+            </button>
+          </div>
+          <div class="status-tasks">
+          </div>
         </div>
       </div>
     </div>
-    <div class="status">
+    <div class="status" id="status_3">
       <div class="flex-status">
         <div class="status-head">
           <h2>Done</h2>
@@ -72,6 +87,13 @@
           </select>
         </div>
         <div class="status-list">
+          <div class="status-addnew">
+            <button class="status-addnew-box" data-handler="addpost_3">
+              Add new task...
+            </button>
+          </div>
+          <div class="status-tasks">
+          </div>
         </div>
       </div>
     </div>
@@ -89,11 +111,11 @@
       <button id="close-modal" data-handler="closemodal">Close</button>
     </div>
     <div class="modal-content">
-      <p>Modal contents</p>
+      <textarea placeholder="Task name" rows="1" class="title-textarea" id="title-textarea"></textarea>
+      <textarea placeholder="Task description (optional)" rows="5" class="desc-textarea" id="desc-textarea"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="modal-button" data-handler="cancelmodal">Cancel</button> 
-      <button class="modal-button" data-handler="cancelmodal">Bollocks</button> 
+      <button class="modal-button" data-handler="submitmodal">Submit</button> 
     </div>
   </div>
 </div>

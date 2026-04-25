@@ -68,10 +68,14 @@ button {
     font-size: 13.33px;
 }
 
+.status-head > h2 {
+    margin-bottom: 5px;
+}
+
 .status-list {
     flex: 1;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 .task-desc {
@@ -158,8 +162,7 @@ small {
 }
 
 .modal-window {
-    width: fit-content;
-    min-width: 300px;
+    width: min(max(400px, calc(35vw - 20px)), calc(100vw - 20px));
     padding: 10px;
     background: #f0f;
 }
@@ -188,10 +191,49 @@ small {
 .modal-footer {
     width: 100%;
     padding-top: 5px;
-    border-top: 2px solid #0f0;
 }
 
 .modal-footer > * {
     float: right;
     margin-left: 5px;
+}
+
+.status-addnew {
+    width: calc(100% - 24px);
+    margin: 12px;
+    height: fit-content;
+}
+
+.status-addnew-box {
+    width: 100%;
+    text-align: center;
+    padding: 25px;
+    border: 2px dashed #000;
+    border-radius: 10px;
+    background-color: #ff0;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.status-addnew:hover > * {
+    background-color: #880;
+}
+
+.status-list:hover {
+    overflow-y: scroll;
+}
+
+.title-textarea {
+    resize: none;
+    width: calc(100% - 10px);
+    padding: 5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.desc-textarea {
+    font-size: 14px;
+    padding: 5px;
+    width: calc(100% - 10px);
+    resize: none;
 }
