@@ -4,3 +4,4 @@
 **/*.db
 *.env
 instance/
+docker-compose.override.yml

@@ -24,4 +24,10 @@ EXPOSE 8000
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app.wsgi:app"]
+
+# https://github.com/privacyidea/privacyidea/issues/4067
+# in nginx proxy manager, set the following rules under 'custom location' `/api/`
+# proxy_set_header X-Forwarded-Proto https;
+# proxy_set_header X-Forwarded-Scheme https;
+# to prevent 'Mixed-Content' error when hitting api endpts from frontend
+CMD ["gunicorn", "--forwarded-allow-ips=*" , "--bind", "0.0.0.0:8000", "app.wsgi:app"]
