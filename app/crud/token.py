@@ -51,7 +51,7 @@ def rotate_refresh_token(db: sqlite3.Connection, refresh_token):
 
     user_id = data["sub"]
     user = cursor.execute(
-        "SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        "SELECT * FROM users WHERE user_id = ?", (user_id,)).fetchone()
 
     if not user:
         # user not found
