@@ -5,46 +5,53 @@
 ### Data Models
 
 #### `User`
+
 ```json
 {
-    "id": "integer",
-    "username": "string"
+  "id": "integer",
+  "username": "string"
 }
 ```
 
 #### `Board`
+
 ```json
 {
-    "id": "integer",
-    "name": "string",
-    "role": "string"
+  "id": "integer",
+  "name": "string",
+  "role": "string"
 }
 ```
 
 #### `Task`
+
 ```json
 {
-    "id": "integer",
-    "title": "string",
-    "status": "string",
-    "content": "string",
-    "board_id": "integer",
-    "created_by": "integer"
+  "id": "integer",
+  "title": "string",
+  "status": "string",
+  "content": "string",
+  "importance": "string",
+  "board_id": "integer",
+  "created_by": "integer",
+  "assigned_to": "integer | null"
 }
 ```
 
 #### `BoardUser`
+
 ```json
 {
-    "id": "integer",
-    "username": "string",
-    "role": "string"
+  "id": "integer",
+  "username": "string",
+  "role": "string"
 }
 ```
 
 ### Response Models
 
 #### `ResponseMessage`
+
 ```json
 {
   "message": "string"
@@ -52,6 +59,7 @@
 ```
 
 #### `LoginResponse`
+
 ```json
 {
   "message": "string",
@@ -60,6 +68,7 @@
 ```
 
 #### `RefreshResponse`
+
 ```json
 {
   "access_token": "string"
@@ -73,11 +82,12 @@
 Authentication route group
 
 ### POST `/api/auth/signup`
+
 - **request**
   ```json
   {
-      "username": "string",
-      "password": "string"
+    "username": "string",
+    "password": "string"
   }
   ```
 - **response**
@@ -89,11 +99,12 @@ Authentication route group
     - `ResponseMessage`
 
 ### POST `/api/auth/login`
+
 - **request**
   ```json
   {
-      "username": "string",
-      "password": "string"
+    "username": "string",
+    "password": "string"
   }
   ```
 - **response**
@@ -105,7 +116,8 @@ Authentication route group
   - **401** - Incorrect username or password
     - `ResponseMessage`
 
-### POST `/api/refresh`
+### POST `/api/auth/refresh`
+
 - **request**
   - **cookies**: `refresh_token`
 - **response**
@@ -115,7 +127,8 @@ Authentication route group
   - **401** - Invalid refresh token
     - `ResponseMessage`
 
-### GET `/api/logout`
+### GET `/api/auth/logout`
+
 - **request**
   - **cookies**: `refresh_token`
 - **response**
@@ -129,29 +142,32 @@ Authentication route group
 Board route group. **ALL** routes require a valid `access_token` cookie.
 
 ### GET `/api/boards/`
+
 - **response**
   - **200** - OK
     - `[Board]`
 
 ### POST `/api/boards/`
+
 - **request**
   ```json
   {
-      "name": "string"
+    "name": "string"
   }
   ```
 - **response**
   - **201** - Board created
     ```json
     {
-        "id": "integer",
-        "name": "string"
+      "id": "integer",
+      "name": "string"
     }
     ```
   - **400** - Missing name
     - `ResponseMessage`
 
 ### GET `/api/boards/<int:id>`
+
 - **response**
   - **200** - OK
     - `Board`
@@ -159,10 +175,11 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
     - `ResponseMessage`
 
 ### PATCH `/api/boards/<int:id>`
+
 - **request**
   ```json
   {
-      "name": "string"
+    "name": "string"
   }
   ```
 - **response**
@@ -176,6 +193,7 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
     - `ResponseMessage`
 
 ### DELETE `/api/boards/<int:id>`
+
 - **response**
   - **200** - Board deleted
     - `ResponseMessage`
@@ -185,32 +203,46 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
     - `ResponseMessage`
 
 ### GET `/api/boards/<int:id>/tasks`
+
 - **response**
   - **200** - OK
     - `[Task]`
 
 ### POST `/api/boards/<int:id>/tasks`
+
 - **request**
   ```json
   {
-      "title": "string",
-      "status": "string",
-      "content": "string"
+    "title": "string",
+    "status": "string",
+    "content": "string",
+    "importance": "string",
+    "assigned_to": "integer"
   }
   ```
 - **response**
   - **201** - Task created
     - `Task`
-  - **400** - Missing title, status, or content
+  - **400** - Missing required fields
     - `ResponseMessage`
   - **403** - User does not have access to the board
     - `ResponseMessage`
 
-### POST `/api/boards/<int:id>/share`
+### GET `/api/boards/<int:id>/users`
+
+- **response**
+  - **200** - OK
+    - `[BoardUser]`
+  - **403** - User does not have access to the board
+    - `ResponseMessage`
+
+### POST `/api/boards/<int:id>/users`
+
+- **description**: Share a board with another user.
 - **request**
   ```json
   {
-      "username": "string"
+    "username": "string"
   }
   ```
 - **response**
@@ -225,7 +257,9 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
   - **409** - Board already shared with user
     - `ResponseMessage`
 
-### POST `/api/boards/<int:id>/revoke/<int:user_id>`
+### DELETE `/api/boards/<int:id>/users/<int:user_id>`
+
+- **description**: Revoke a user's access to a board.
 - **response**
   - **200** - Access revoked
     - `ResponseMessage`
@@ -236,9 +270,40 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
   - **404** - Board, user, or user in board not found
     - `ResponseMessage`
 
-### GET `/api/boards/<int:id>/users`
+---
+
+## `/api/tasks`
+
+Task route group. **ALL** routes require a valid `access_token` cookie.
+
+### GET `/api/tasks/<int:id>`
+
 - **response**
   - **200** - OK
-    - `[BoardUser]`
-  - **403** - User does not have access to the board
+    - `Task`
+
+### PATCH `/api/tasks/<int:id>`
+
+- **request**
+  ```json
+  {
+    "title": "string",
+    "status": "string",
+    "content": "string",
+    "importance": "string",
+    "assigned_to": "integer"
+  }
+  ```
+- **response**
+  - **200** - Task updated successfully
+    - `ResponseMessage`
+  - **400** - User does not have access to the task
+    - `ResponseMessage`
+
+### DELETE `/api/tasks/<int:id>`
+
+- **response**
+  - **200** - Task deleted successfully
+    - `ResponseMessage`
+  - **400** - User does not have access to the task
     - `ResponseMessage`
