@@ -4,7 +4,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./instance:/app/instance
+      - app_data:/app/instance
     env_file:
       - .env
     restart: unless-stopped
@@ -14,3 +14,6 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
+
+volumes:
+  app_data:
