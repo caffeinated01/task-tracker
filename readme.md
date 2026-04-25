@@ -4,17 +4,21 @@
 python -m .venv venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
+mv .env.example .env
 ```
 
 # running
+
+## development
 
 ```
 flask init-db
 flask run
 ```
 
-use gunicorn for production:
+## production
 
 ```
-gunicorn app.wsgi:app
+docker compose up --build -d
 ```
