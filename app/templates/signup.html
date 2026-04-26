@@ -1,15 +1,15 @@
 {% extends "base.html" %} 
 
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
-{% endblock %} 
+<link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}" />
+{% endblock %}
 
 {% block content %}
-<div class="login-page-wrapper">
-  <div class="login-container">
+<div class="auth-page-wrapper">
+  <div class="auth-container">
     <!-- placeholder title, will replace later with a logo or smt -->
     <h1>Task Tracker</h1>
-    <div class="login-header">
+    <div class="auth-header">
       <p class="title text-xl">Create your account</p>
       <p class="subtitle text-md" style="color: var(--muted-color)">
         Hey there! Please enter your details

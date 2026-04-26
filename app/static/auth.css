@@ -1,4 +1,4 @@
-.login-page-wrapper {
+.auth-page-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,19 +7,19 @@
   padding-right: 16px;
 }
 
-.login-container {
+.auth-container {
   width: 100%;
   max-width: 500px;
   text-align: center;
 }
 
-.login-header .title {
+.auth-header .title {
   font-size: 1.5rem;
   margin-bottom: 12px;
   font-weight: 500;
 }
 
-.login-header .subtitle {
+.auth-header .subtitle {
   color: var(--muted-color);
   margin-bottom: 40px;
 }
