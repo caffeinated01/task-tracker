@@ -38,35 +38,36 @@
     </div>
     <a class="signup-link text-md" href="/signup">Or sign up here</a>
   </div>
-  {% endblock %} {% block scripts %}
-  <script>
-    const loginForm = document.getElementById("login-form");
-
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-
-      try {
-        const response = await fetch('{{ url_for("auth.login") }}', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        });
-
-        if (response.ok) {
-          window.location.href = '{{ url_for("views.boards") }}';
-        } else {
-          const data = await response.json();
-          console.error(data.message);
-        }
-      } catch (error) {
-        console.error(error.message);
-      }
-    });
-  </script>
-  {% endblock %}
 </div>
+{% endblock %} {% block scripts %}
+<script>
+  const loginForm = document.getElementById("login-form");
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const res = await fetch('{{ url_for("auth.login") }}', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (res.ok) {
+        window.location.href = '{{ url_for("views.boards") }}';
+      } else {
+        const data = await res.json();
+        showNotification(data.message, true);
+      }
+    } catch (err) {
+      showNotification("Oops, something went wrong", true);
+      console.error(err);
+    }
+  });
+</script>
+{% endblock %}

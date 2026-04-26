@@ -15,7 +15,7 @@ textarea {
   --font-color: #ffffff;
   --fg-color: #212121;
   --nav-color: #2e2f33;
-  --muted-color: #AAAAAA;
+  --muted-color: #aaaaaa;
 
   background-color: var(--bg-color);
   color: var(--font-color);
@@ -24,6 +24,8 @@ textarea {
 body {
   margin: 0;
 }
+
+/* utils */
 
 .text-xl {
   font-size: 1.25rem;
@@ -38,4 +40,74 @@ body {
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+/* notification styles */
+
+#notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  min-width: 300px;
+  max-width: 400px;
+  height: auto;
+  background-color: var(--fg-color);
+  color: var(--font-color);
+
+  padding: 16px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border-left: 4px solid rgba(0, 0, 0, 0);
+  overflow-wrap: break-word;
+
+  animation: toast-slide-in 0.3s cubic-bezier(0.33, 1, 0.68, 1); /* https://easingwizard.com/ */
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-fade-out {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.32, 0, 0.67, 0);
+}
+
+.toast-error {
+  border-left-color: #ff0033;
+}
+
+.toast-success {
+  border-left-color: #8db600;
+}
+
+.toast-message {
+  flex-grow: 1; /* occupy remaining space */
+}
+
+.toast-close {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.toast-close:hover {
+  opacity: 1;
 }

@@ -307,3 +307,37 @@ Task route group. **ALL** routes require a valid `access_token` cookie.
     - `ResponseMessage`
   - **400** - User does not have access to the task
     - `ResponseMessage`
+
+---
+
+# Frontend Specification
+
+## Using API Routes That Require Authentication
+
+Use `fetchWithAuth(url, options)` when doing so. Call it like `fetch()`.
+
+**Usage:**
+
+```javascript
+const res = await fetchWithAuth(`/api/boards/${boardId}/tasks`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    title: title,
+    status: updateStatus.board,
+    content: desc,
+    importance: 1,
+  }),
+});
+```
+
+## Displaying Notifications
+
+Use `showNotification(message, isError)` when doing so.
+
+**Usage:**
+
+```javascript
+showNotification("Board created successfully", false);
+showNotification("Incorrect username or password", true);
+```

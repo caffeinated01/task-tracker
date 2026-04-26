@@ -11,8 +11,10 @@
     <title>Task Tracker</title>
   </head>
   <body>
+    <div id="notification-container"></div>
     {% block content %} {% endblock %}
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
+    <script src="{{ url_for('static', filename='notification.js') }}"></script>
     {% block scripts %} {% endblock %}
   </body>
 </html>
