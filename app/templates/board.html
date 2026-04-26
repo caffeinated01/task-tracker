@@ -11,7 +11,10 @@
 <div class="flex-base">
   <div class="base header">
     <h2 class="header-title">Boards</h2>
-    <button class="return-button" onclick="window.location.pathname = '/boards'">Return to home</button>
+    <div class="header-buttons">
+      <button class="return-button" onclick="loadAllPosts()">Refresh</button>
+      <button class="return-button" onclick="window.location.pathname = '/boards'">Return to home</button>
+    </div>
   </div>
   <div class="base board-container">
     <div class="status" id="status_1">
