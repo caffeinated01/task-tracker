@@ -1,14 +1,44 @@
+/*
+* TODO:
+* -   Server error handling within submitModal and loadAllPosts
+* -   Calling loadAllPosts each time we want to update might not be good. We might need to change it.
+*/
+
 // fetch board data from API
 let boardId = '';
+let boardContent;
+const postTemplate = document.getElementById('task-template');
 
 async function loadAllPosts() {
     const currentPath = window.location.pathname.split("/");
     boardId = currentPath[currentPath.length - 1];
     
     try {
-        const boardContent = await fetchWithAuth(`/api/boards/${boardId}/tasks`).then((r) => r.json());
-        console.log(boardContent);
+        // clear every row first
+        document.querySelectorAll('.status-tasks').forEach((row) => {row.innerHTML = "";})
+
+        boardContent = await fetchWithAuth(`/api/boards/${boardId}/tasks`).then((r) => r.json());
+        boardContent.forEach(post => {
+            // console.log(post);
+
+            // update fields which are supposed to have post id
+            const postClone = document.importNode(postTemplate.content, true);
+            postClone.querySelector('.task').id = 'task_' + post.task_id;
+            for (child of postClone.querySelector('.task').getElementsByTagName("*")) {
+                if (child.dataset.handler) {
+                    child.dataset.handler = child.dataset.handler + "_" + post.task_id;
+                }
+            }
+
+            // update textual content (importance is done pretty sloppily though)
+            postClone.querySelector('.task-header > h3').textContent = post.title;
+            postClone.querySelector('.task-desc').textContent = post.content + '\r\n\r\nImportance: ' + post.importance;
+            postClone.querySelector('small').textContent = `Created by id ${post.created_by} on ${post.created_at}`;
+
+            document.querySelector(`#status_${post.status} .status-tasks`).appendChild(postClone);
+        });
     } catch (err) {
+        console.log(err)
         return;
     }
 }
@@ -29,11 +59,15 @@ var clickMap = {
 }
 
 var updateStatus = {board: null, id: null};
+let postModalTemp = document.getElementById('post-modal-template');
 
 function addPostHandle(status) {
-    document.querySelector('.modal-base').classList.remove('hidden');
     updateStatus.id = null;
     updateStatus.board = parseInt(status);
+
+    const newPostModal = document.importNode(postModalTemp.content, true);
+    document.querySelector('.modal-base').replaceChildren(newPostModal);
+    document.querySelector('.modal-base').classList.remove('hidden');
 }
 
 function optionBtnHandle(id) {
@@ -42,11 +76,18 @@ function optionBtnHandle(id) {
 }
 
 function editBtnHandle(id) {
+    const post = boardContent.find((x) => x.task_id == id);
+    if (!post) return;
+
     var dropdownMenu = document.querySelector(`#task_${id} .option-dropdown-menu`);
     dropdownMenu.hidden = true;
     updateStatus.id = id;
     updateStatus.board = null;
 
+    const newPostModal = document.importNode(postModalTemp.content, true);
+    newPostModal.getElementById('title-textarea').value = post.title;
+    newPostModal.getElementById('desc-textarea').value = post.content;
+    document.querySelector('.modal-base').replaceChildren(newPostModal);
     document.querySelector('.modal-base').classList.remove('hidden');
 }
 
@@ -65,6 +106,8 @@ function submitModal() {
     var title = document.querySelector('.title-textarea').value;
     var desc = document.querySelector('.desc-textarea').value;
     if (title == '') return;
+    // should we change the logic in the backend so description is optional?
+    if (desc == '') return;
 
     // only clear and close if went through
     // update importance
@@ -74,11 +117,29 @@ function submitModal() {
             body: JSON.stringify({title: title, status: updateStatus.board, content: desc, importance: 1}),
             headers: {"Content-Type": "application/json"}
         }).then((resp) => {
-            console.log(resp.json())
-            submitModalSuccess()
-        })
+            // console.log(resp.json());
+            submitModalSuccess();
+            loadAllPosts();
+        });
     } else if (updateStatus.id) {
+        const post = boardContent.find((x) => x.task_id == updateStatus.id);
+        if (!post) throw Error(`Unable to find post with id ${updateStatus.id}`);
 
+        fetchWithAuth(`/api/tasks/${updateStatus.id}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+                title: title, 
+                status: post.status, 
+                content: desc, 
+                importance: post.importance, 
+                assigned_to: post.assigned_to
+            }),
+            headers: {"Content-Type": "application/json"}
+        }).then((resp) => {
+            // console.log(resp.json());
+            submitModalSuccess();
+            loadAllPosts();
+        });
     } else return;
 }
 
@@ -173,8 +234,30 @@ function dragEndHandle(e) {
     var parentStatusBox = document.elementsFromPoint(e.clientX, e.clientY)
                                   .find((x) => x.classList.contains('flex-status'));
 
-    if (parentStatusBox && !parentStatusBox.querySelector('.status-list').childNodes.values().find((x) => x == e.target)) {
-        parentStatusBox.querySelector('.status-list').appendChild(e.target);
+    // if parent status box exists and is not the same as original:
+    if (parentStatusBox && !parentStatusBox.querySelector('.status-tasks').childNodes.values().find((x) => x == e.target)) {
+        // we don't need to update it now since it will be updated once we refresh
+        // parentStatusBox.querySelector('.status-list').appendChild(e.target);
+
+        // update dragging server-side
+        const postId = e.target.id.slice(-10);
+        const post = boardContent.find((x) => x.task_id == postId);
+        const statusId = parseInt(parentStatusBox.parentElement.id.slice(-1));
+
+        fetchWithAuth(`/api/tasks/${postId}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+                title: post.title, 
+                status: statusId, 
+                content: post.content, 
+                importance: post.importance, 
+                assigned_to: post.assigned_to
+            }),
+            headers: {"Content-Type": "application/json"}
+        }).then((resp) => {
+            // console.log(resp.json());
+            loadAllPosts();
+        });
     }
     // console.log(e.target);
     // console.log(parentStatusBox);
@@ -182,8 +265,6 @@ function dragEndHandle(e) {
     preview.style.left = '-9999px';
     preview.style.top = '-9999px';
     preview.style.transform = '';
-
-    // add stuff to update main page
 }
 
 // connect handles

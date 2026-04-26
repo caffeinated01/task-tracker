@@ -104,7 +104,25 @@
     <h3>Set status to "blah"</h3>
   </div>
 </div>
-<div class="modal-base">
+<div class="modal-base hidden">
+</div>
+<template id="task-template">
+  <div class="task" id="task" draggable="true">
+    <div class="task-header">
+      <h3 draggable="false">Task name</h3>
+      <div class="option-dropdown-comp" draggable="false">
+        <button class="option-button" data-handler="optionbtn">Options</button>
+        <div class="option-dropdown-menu" hidden>
+          <a class="option-dropdown-select" data-handler="editbtn">Edit</a>
+          <a class="option-dropdown-select" data-handler="deletebtn">Delete</a>
+        </div>
+      </div>
+    </div>
+    <p class="task-desc" draggable="false">Task details</p>
+    <small draggable="false">Task description</small>
+  </div>
+</template>
+<template id="post-modal-template">
   <div class="modal-window">
     <div class="modal-title">
       <h3>Modal title</h3>
@@ -118,25 +136,21 @@
       <button class="modal-button" data-handler="submitmodal">Submit</button> 
     </div>
   </div>
-</div>
-<template id="task-template">
-  <div class="task" id="task_n" draggable="true">
-    <div class="task-header">
-      <h3 draggable="false">Task name</h3>
-      <div class="option-dropdown-comp" draggable="false">
-        <button class="option-button" id="option-button" data-handler="optionbtn_n">Options</button>
-        <div class="option-dropdown-menu" hidden>
-          <a class="option-dropdown-select" data-handler="editbtn_n">Edit</a>
-          <a class="option-dropdown-select" data-handler="deletebtn_n">Delete</a>
-        </div>
-      </div>
-    </div>
-    <p class="task-desc" draggable="false">Task details</p>
-    <small draggable="false">Task description</small>
-  </div>
 </template>
-<template id="modal-button-template">
-  <button class="modal-button" data-handler="cancelmodal">Button</button> 
+<template id="delete-modal-template">
+  <div class="modal-window">
+    <div class="modal-title">
+      <h3>Delete post?</h3>
+      <button id="close-modal" data-handler="closemodal">Close</button>
+    </div>
+    <div class="modal-content">
+      Are you sure you would like to delete this post?
+    </div>
+    <div class="modal-footer">
+      <button class="modal-button" data-handler="deletemodal">Delete</button> 
+      <button class="modal-button" data-handler="closemodal">Close</button>
+    </div>
+  </div>
 </template>
 {% endblock %} 
 

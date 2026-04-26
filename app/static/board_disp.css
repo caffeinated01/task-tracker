@@ -80,6 +80,7 @@ button {
 
 .task-desc {
     margin: 0px;
+    white-space: pre-line;
 }
 
 .task {
@@ -167,6 +168,11 @@ small {
     background: #f0f;
 }
 
+.modal-content {
+    font-size: 15px;
+    padding: 8px 0px 0px;
+}
+
 .modal-title {
     display: flex;
     align-items: center;
@@ -225,7 +231,7 @@ small {
 
 .title-textarea {
     resize: none;
-    width: calc(100% - 10px);
+    width: calc(100% - 12px);
     padding: 5px;
     font-weight: 600;
     white-space: nowrap;
@@ -234,6 +240,6 @@ small {
 .desc-textarea {
     font-size: 14px;
     padding: 5px;
-    width: calc(100% - 10px);
+    width: calc(100% - 12px);
     resize: none;
 }
