@@ -91,6 +91,8 @@ button {
 
 small {
     font-style: italic;
+    text-wrap: balance;
+    word-break: break-word;
 }
 
 .dragging {
