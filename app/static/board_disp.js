@@ -169,6 +169,8 @@ const emptyImg = document.createElement('img');
 emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
 function dragStartHandle(e) {
+    console.log(e);
+
     // check if task element is being selected
     draggingTask = e.target.classList && e.target.classList.contains('task');
     if (!draggingTask) return;
@@ -190,10 +192,10 @@ function dragStartHandle(e) {
     }
 
     const elementRect = e.target.getBoundingClientRect();
-    preview.style.width = elementRect.width + 'px';
-    preview.style.height = elementRect.height + 'px';
+    preview.style.width = elementRect.width - 4 + 'px';
+    preview.style.height = elementRect.height - 4 + 'px';
 
-    previewOffset.x = e.layerX;
+    previewOffset.x = e.clientX - elementRect.left;
     previewOffset.y = e.clientY - elementRect.top;          // hack to make sure y of the offset meets
                                                             // can't tell if this is intended behaviour
 
