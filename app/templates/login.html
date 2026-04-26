@@ -47,6 +47,10 @@
 
 {% block scripts %}
 <script>
+  window.onload = function () {
+    let input = document.getElementById("username").focus();
+  };
+
   const loginForm = document.getElementById("login-form");
 
   loginForm.addEventListener("submit", async (e) => {
