@@ -1,29 +1,30 @@
 {% extends "base.html" %} 
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='boards.css') }}" />
+{% endblock %} 
+
 {% block content %}
-<h1>Your Boards</h1>
-<div id="boards-container"></div>
+<div class="boards-page-wrapper">
+  <div class="boards-container">
+    <p class="title text-3xl">Your Boards</p>
+    <div id="boards-container"></div>
 
-<h2>Create a new board</h2>
-<form id="create-board-form">
-  <input type="text" id="board-name" placeholder="New board name" required />
-  <button type="submit">Create</button>
-</form>
-
-<style>
-  .user-list ul {
-    display: inline-flex;
-    list-style: none;
-    padding: 0;
-    margin: 0 0 0 10px;
-  }
-  .user-list li {
-    margin-right: 10px;
-    background-color: #f0f0f0;
-    padding: 5px;
-    border-radius: 3px;
-  }
-</style>
+    <button class="board-card create-board-btn">
+      <span class="text-md">Create new board</span>
+    </button>
+    <h2>Create a new board</h2>
+    <form id="create-board-form">
+      <input
+        type="text"
+        id="board-name"
+        placeholder="New board name"
+        required
+      />
+      <button type="submit">Create</button>
+    </form>
+  </div>
+</div>
 {% endblock %} 
 
 {% block scripts %}
