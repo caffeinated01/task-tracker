@@ -1,6 +1,10 @@
-{% extends "base.html" %} {% block css %}
+{% extends "base.html" %} 
+
+{% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
-{% endblock %} {% block content %}
+{% endblock %} 
+
+{% block content %}
 <div class="login-page-wrapper">
   <div class="login-container">
     <!-- placeholder title, will replace later with a logo or smt -->
@@ -12,7 +16,7 @@
       </p>
     </div>
     <div class="form-container">
-      <form id="login-form">
+      <form id="login-form" class="account-form">
         <div class="form-group">
           <label class="text-md" for="username">Username</label>
           <input
@@ -33,13 +37,15 @@
             required
           />
         </div>
-        <button class="text-xl" type="submit">Login</button>
+        <button class="submit-btn text-xl" type="submit">Login</button>
       </form>
     </div>
-    <a class="signup-link text-md" href="/signup">Or sign up here</a>
+    <a class="redir-link text-md" href="/signup">Or sign up here</a>
   </div>
 </div>
-{% endblock %} {% block scripts %}
+{% endblock %} 
+
+{% block scripts %}
 <script>
   const loginForm = document.getElementById("login-form");
 
