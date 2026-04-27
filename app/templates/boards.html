@@ -11,7 +11,7 @@
     <div id="boards-container">
       <div id="boards-list"></div>
 
-      <div class="board-card create-board-btn">
+      <div class="board-card create-board-btn" id="create-board-btn">
         <span class="text-md">Create new board</span>
       </div>
 
@@ -29,6 +29,29 @@
     </div>
   </div>
 </div>
+
+<template id="create-board-modal-template">
+  <div class="modal-window">
+    <div class="modal-title">
+      <p class="text-2xl">Create board</p>
+      <button class="modal-close" data-modal-action="close">
+        ✕
+      </button>
+    </div>
+    <div class="modal-content">
+      <input
+        type="text"
+        placeholder="Board name"
+        rows="1"
+        class="title-input text-md"
+        id="board-name-input"
+      ></input>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-button submit-btn text-lg" data-handler="createboard">Create</button>
+    </div>
+  </div>
+</template>
 {% endblock %} 
 
 {% block scripts %}

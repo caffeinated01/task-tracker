@@ -10,6 +10,9 @@ const BoardRoleNames = {
 
 const boardsList = document.getElementById("boards-list");
 const template = document.getElementById("board-card-template");
+const createBoardModalTemplate = document.getElementById(
+  "create-board-modal-template",
+);
 
 const fetchAndDisplayBoards = async () => {
   const response = await fetchWithAuth("/api/boards");
@@ -38,4 +41,57 @@ const fetchAndDisplayBoards = async () => {
   boardsList.appendChild(fragment);
 };
 
+const createBoardButton = document.getElementById("create-board-btn");
+
+const clickMap = {
+  createboard: createBoardFromModal,
+};
+
+createBoardButton.addEventListener("click", () => {
+  showTemplateInModal(createBoardModalTemplate);
+});
+
+async function createBoardFromModal() {
+  const boardNameInput = document.getElementById("board-name-input");
+  if (!boardNameInput) return;
+
+  const boardName = boardNameInput.value.trim();
+
+  if (!boardName) {
+    showNotification("Board name is required", true);
+    return;
+  }
+
+  try {
+    const response = await fetchWithAuth("/api/boards", {
+      method: "POST",
+      body: JSON.stringify({ name: boardName }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      const data = await response.json()
+      const message = data.message
+      throw Error(message);
+    }
+
+    hideModal();
+    showNotification("Board created successfully", false);
+    document.dispatchEvent(new Event("boardCreated"));
+  } catch (err) {
+    showNotification(err, true);
+  }
+}
+
+function clickHandle(event) {
+  if (!event.target.dataset.handler) return;
+
+  const handlerName = event.target.dataset.handler.split("_")[0];
+  if (!clickMap[handlerName]) return;
+
+  clickMap[handlerName]();
+}
+
 document.addEventListener("DOMContentLoaded", fetchAndDisplayBoards);
+document.addEventListener("boardCreated", fetchAndDisplayBoards);
+document.addEventListener("click", clickHandle);

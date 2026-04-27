@@ -12,9 +12,11 @@
   </head>
   <body>
     <div id="notification-container"></div>
+    <div id="modal-container" class="modal-base hidden"></div>
     {% block content %} {% endblock %}
     <script src="{{ url_for('static', filename='fetch.js') }}"></script>
     <script src="{{ url_for('static', filename='notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='modal.js') }}"></script>
     {% block scripts %} {% endblock %}
   </body>
 </html>

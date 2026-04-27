@@ -103,7 +103,7 @@ body {
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 1000;
+  z-index: 2000;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -165,4 +165,145 @@ body {
 
 .toast-close:hover {
   opacity: 1;
+}
+
+/* modal styles */
+
+.hidden {
+  display: none;
+}
+
+.modal-base {
+  display: grid;
+  place-items: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  background: #0008;
+  backdrop-filter: blur(5px);
+  z-index: 1100;
+}
+
+.modal-base.hidden {
+  display: none;
+}
+
+.modal-window {
+  width: min(max(400px, calc(35vw - 20px)), calc(100vw - 20px));
+  padding: 20px;
+  background: var(--fg-color);
+  border-radius: 8px;
+}
+
+.modal-window input,
+.modal-window textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #161616;
+  color: var(--font-color);
+  padding: 14px;
+  border: 2px solid rgb(255, 255, 255, 0);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.submit-btn {
+  width: 100%;
+  background-color: #f7f6f3;
+  color: var(--bg-color);
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-window input:focus,
+.modal-window textarea:focus {
+  outline: none;
+  border-color: rgb(255, 255, 255, 0.5);
+}
+
+.modal-window input::placeholder,
+.modal-window textarea::placeholder {
+  color: var(--muted-color);
+}
+
+.modal-button {
+  background-color: #f7f6f3;
+  color: var(--bg-color);
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-button:hover {
+  filter: brightness(0.95);
+}
+
+.modal-button-secondary {
+  background-color: transparent;
+  color: var(--muted-color);
+  border: 1px solid rgb(255, 255, 255, 0.2);
+}
+
+.modal-button-secondary:hover {
+  background-color: rgb(255, 255, 255, 0.08);
+}
+
+.modal-content {
+  font-size: 15px;
+  padding: 8px 0 0;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-weight: 500;
+}
+
+.modal-title > * {
+  flex-grow: 1;
+}
+
+.modal-close {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  color: var(--muted-color);
+  background: none;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.modal-footer {
+  width: 100%;
+  padding-top: 20px;
+}
+
+.modal-footer > * {
+  float: right;
+  margin-left: 5px;
+}
+
+.title-textarea {
+  resize: none;
+  min-height: 52px;
+  white-space: nowrap;
+}
+
+.desc-textarea {
+  font-size: 14px;
+  min-height: 120px;
+  resize: none;
 }

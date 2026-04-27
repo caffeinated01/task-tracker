@@ -15,7 +15,7 @@
 
 .boards-page-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1460px;
 }
 
 #boards-container {
@@ -26,10 +26,7 @@
 }
 
 #boards-list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 20px;
+  display: contents;
 }
 
 .title {
