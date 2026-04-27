@@ -1,3 +1,9 @@
+:root {
+  --board-card-width: 240px;
+  --board-card-height: 160px;
+  --board-card-padding: 12px;
+}
+
 .boards-page-wrapper {
   min-height: 100vh;
   box-sizing: border-box;
@@ -7,9 +13,23 @@
   padding-top: 32px;
 }
 
-.boards-container {
+.boards-page-container {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1400px;
+}
+
+#boards-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+#boards-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
 }
 
 .title {
@@ -17,33 +37,91 @@
 }
 
 .board-card {
-  width: 180px;
-  height: 120px;
+  width: var(--board-card-width);
+  height: var(--board-card-height);
   border-radius: 8px;
-  padding: 12px;
   cursor: pointer;
   font-size: 14px;
   border: none;
 
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
 
-  background-size: cover;
-  background-position: center;
+  border: 2px solid rgb(255, 255, 255, 0);
 
   color: var(--font-color);
 
-  position: relative;
   overflow: hidden;
 }
 
-.board-card:hover {
+.board {
+  flex-direction: column;
+
+  width: calc(var(--board-card-width) + 2 * var(--board-card-padding));
+  height: calc(var(--board-card-height) + 2 * var(--board-card-padding));
+
+  text-decoration: none;
+}
+
+.board-card-section {
+  background-color: var(--fg-color);
+  width: 100%;
+}
+
+.board-card-section-bg {
+  height: 60%;
+  background-color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  background-color: var(--bg-color);
+  color: var(--font-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-card-section-details {
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.title {
+  margin-left: 8px;
+  margin-right: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.username {
+  margin-left: 8px;
+  margin-right: 8px;
+
+  color: var(--muted-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-board-btn:hover {
   filter: brightness(1.2);
 }
 
 .create-board-btn {
   background-color: var(--lighter-fg-color);
   color: var(--muted-color);
+  padding: var(--board-card-padding);
 
   align-items: center;
   justify-content: center;
