@@ -35,19 +35,7 @@ def update_task(id, data):
     if not check_user_in_board(db, board_id, user_id):
         return {"message": "You don't have access to this task"}, 400
 
-    # if field is empty then the new value will be None.
-    # we use COALESCE in update_task_details to keep the old value if the new value is None
-    new_title = data.get("title")
-    new_status = data.get("status")
-    new_content = data.get("content")
-    new_importance = data.get("importance")
-    new_assigned_to = data.get("assigned_to")
-    clear_assigned_to = new_assigned_to == ""
-    if clear_assigned_to:
-        new_assigned_to = None
-
-    update_task_details(db, id, new_title, new_status,
-                        new_content, new_importance, new_assigned_to, clear_assigned_to)
+    update_task_details(db, id, data)
 
     return jsonify({"message": "Task updated successfully"}), 200
 

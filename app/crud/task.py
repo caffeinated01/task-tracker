@@ -42,18 +42,29 @@ def get_tasks_for_board(db: sqlite3.Connection, board_id, user_id):
     return [dict(task) for task in tasks]
 
 
-def update_task_details(db: sqlite3.Connection, task_id, title=None, status=None, content=None, importance=None, assigned_to=None, clear_assigned_to=False):
-    # https://www.reddit.com/r/golang/comments/8875n4/partial_updates_with_databasesql_is_this_possible/
+def update_task_details(db, task_id, data):
+    fields = []
+    values = []
+
+    for key in ["title", "status", "content", "importance", "assigned_to"]:
+        if key in data:
+            fields.append(f"{key} = ?")
+            values.append(data[key])
+
+    if not fields:
+        return
+
+    values.append(task_id)
+
     db.execute(
-        """
+        f"""
         UPDATE tasks
-        SET title = COALESCE(?, title),
-            status = COALESCE(?, status),
-            content = COALESCE(?, content),
-            importance = COALESCE(?, importance),
-            assigned_to = CASE WHEN ? = 1 THEN NULL ELSE COALESCE(?, assigned_to) END
+        SET {", ".join(fields)}
         WHERE task_id = ?
-    """, (title, status, content, importance, 1 if clear_assigned_to else 0, assigned_to, task_id))
+        """,
+        values,
+    )
+
     db.commit()
 
 
