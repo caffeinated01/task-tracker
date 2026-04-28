@@ -300,6 +300,11 @@ body {
   resize: none;
   min-height: 52px;
   white-space: nowrap;
+  margin: 8px 0px;
+}
+
+.title-input {
+  margin: 8px 0px;
 }
 
 .desc-textarea {

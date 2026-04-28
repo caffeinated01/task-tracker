@@ -66,12 +66,18 @@ var clickMap = {
   submitmodal: submitModal,
   deletemodal: deleteModal,
   addpost: addPostHandle,
+  shareboard: shareBoardHandle,
 };
 
 var updateStatus = { board: null, id: null };
 let postModalTemp = document.getElementById("post-modal-template");
 let deleteModalTemp = document.getElementById("delete-modal-template");
+let shareModalTemp = document.getElementById("share-modal-template");
 let pendingDeleteTaskId = null;
+
+function shareBoardHandle() {
+  showTemplateInModal(shareModalTemp);
+}
 
 function addPostHandle(status) {
   updateStatus.id = null;
