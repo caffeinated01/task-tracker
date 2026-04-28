@@ -200,7 +200,8 @@ body {
 }
 
 .modal-window input,
-.modal-window textarea {
+.modal-window textarea,
+.modal-window select {
   width: 100%;
   box-sizing: border-box;
   background-color: #161616;
@@ -222,13 +223,25 @@ body {
 }
 
 .modal-window input:focus,
-.modal-window textarea:focus {
+.modal-window textarea:focus,
+.modal-window select:focus {
   outline: none;
   border-color: rgb(255, 255, 255, 0.5);
 }
 
 .modal-window input::placeholder,
 .modal-window textarea::placeholder {
+  color: var(--muted-color);
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.modal-label {
   color: var(--muted-color);
 }
 
@@ -334,14 +347,43 @@ body {
   justify-content: space-between;
 }
 
-.navbar-brand {
+.navbar-big {
   text-decoration: none;
   color: var(--font-color);
   font-weight: 600;
 }
 
-.navbar-brand:hover {
+.navbar-big:hover {
   opacity: 0.8;
+}
+
+.navbar-big-input {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--font-color);
+  padding: 6px 10px;
+  width: clamp(12ch, 24vw, 32ch);
+  cursor: text;
+}
+
+.navbar-big-input:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  opacity: 1;
+}
+
+.navbar-big-input:focus {
+  background-color: var(--fg-color);
+  border-color: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.navbar-big-input.is-readonly {
+  cursor: default;
+}
+
+.navbar-big-input.is-readonly:hover {
+  background-color: transparent;
 }
 
 .navbar-menu {

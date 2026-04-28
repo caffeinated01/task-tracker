@@ -10,9 +10,12 @@
 {% block content %}
 <nav class="navbar">
   <div class="navbar-container">
-    <a href="/boards" class="navbar-brand">
-      <span class="text-2xl">Kanban</span>
-    </a>
+    <input
+      type="text"
+      class="navbar-big navbar-big-input text-2xl"
+      id="board-name"
+      aria-label="Board name"
+    />
     <div class="navbar-menu">
       <button data-handler="shareboard" class="navbar-button text-md">Share Board</button> 
       <div class="navbar-user-dropdown">
@@ -135,8 +138,13 @@
         </div>
       </div>
     </div>
-    <p class="task-desc" draggable="false">Task details</p>
-    <small draggable="false">Task description</small>
+    <p class="task-desc text-sm" draggable="false">Task details</p>
+    <div class="task-meta" draggable="false">
+      <div class="importance-track">
+        <div class="importance-bar" aria-label="Importance"></div>
+      </div>
+      <div class="task-footer text-xs"></div>
+    </div>
   </div>
 </template>
 <template id="post-modal-template">
@@ -158,6 +166,20 @@
         class="desc-textarea text-md"
         id="desc-textarea"
       ></textarea>
+      <div class="modal-field">
+        <label class="modal-label text-sm" for="importance-input">Importance</label>
+        <select class="modal-select text-md" id="importance-input">
+          <option value="1">Low</option>
+          <option value="2">Medium</option>
+          <option value="3">High</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label text-sm" for="assigned-to-input">Assigned to</label>
+        <select class="modal-select text-md" id="assigned-to-input">
+          <option value="">Unassigned</option>
+        </select>
+      </div>
     </div>
     <div class="modal-footer">
       <button

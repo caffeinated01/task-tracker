@@ -42,9 +42,12 @@ def update_task(id, data):
     new_content = data.get("content")
     new_importance = data.get("importance")
     new_assigned_to = data.get("assigned_to")
+    clear_assigned_to = new_assigned_to == ""
+    if clear_assigned_to:
+        new_assigned_to = None
 
     update_task_details(db, id, new_title, new_status,
-                        new_content, new_importance, new_assigned_to)
+                        new_content, new_importance, new_assigned_to, clear_assigned_to)
 
     return jsonify({"message": "Task updated successfully"}), 200
 

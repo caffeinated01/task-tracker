@@ -141,15 +141,18 @@ def create_task_for_board(id, data):
         return jsonify({"message": "Missing title"}), 400
     if not status:
         return jsonify({"message": "Missing status"}), 400
-    if not content:
-        return jsonify({"message": "Missing content"}), 400
     if not importance:
         return jsonify({"message": "Missing importance"}), 400
+
+    if content is None:
+        content = ""
+    if assigned_to == "":
+        assigned_to = None
 
     task_id = store_task(db, title, status, content,
                          importance, id, user_id, assigned_to)
 
-    return jsonify({"id": task_id, "title": title, "status": status, "content": content, "importance": importance, "board_id": id, "created_by": user_id, "assigned_to": assigned_to}), 201
+    return jsonify({"id": task_id, "title": title, "status": status, "content": content, "importance": importance, "board_id": id, "created_by": g.current_user["username"], "assigned_to": assigned_to}), 201
 
 
 @bp.route("/<string:id>/users", methods=["GET"])

@@ -6,10 +6,14 @@
 
 // fetch board data from API
 let boardId = "";
-let boardContent;
+let boardName = null;
+let boardContent = null;
 let currentUserRole = null;
 let currentUsername = null;
 const postTemplate = document.getElementById("task-template");
+const title = document.querySelector("#board-name");
+let boardNameBound = false;
+let boardUsers = [];
 
 async function loadAllPosts() {
   const currentPath = window.location.pathname.split("/");
@@ -27,7 +31,17 @@ async function loadAllPosts() {
       const boardInfo = await boardResp.json();
       currentUserRole = boardInfo.board.role;
       currentUsername = boardInfo.user.username;
+      boardName = boardInfo.board.name;
       displayUsername(currentUsername);
+      title.value = boardName;
+      title.dataset.value = boardName;
+      if (!boardNameBound) {
+        bindBoardNameInput();
+        boardNameBound = true;
+      }
+      const canEditBoard = parseInt(currentUserRole, 10) === 1;
+      title.readOnly = !canEditBoard;
+      title.classList.toggle("is-readonly", !canEditBoard);
     }
 
     // clear every row first
@@ -52,12 +66,24 @@ async function loadAllPosts() {
         }
       }
 
-      // update textual content (importance is done pretty sloppily though)
+      // update textual content
       postClone.querySelector(".task-header > h3").textContent = post.title;
-      postClone.querySelector(".task-desc").textContent =
-        post.content + "\r\n\r\nImportance: " + post.importance;
-      postClone.querySelector("small").textContent =
-        `Created by id ${post.created_by} on ${post.created_at}`;
+      postClone.querySelector(".task-desc").textContent = post.content;
+
+      const footer = postClone.querySelector(".task-footer");
+      if (footer) {
+        footer.textContent = `Created by ${post.created_by}`;
+      }
+
+      const bar = postClone.querySelector(".importance-bar");
+      if (bar) {
+        const importance = Math.max(
+          1,
+          Math.min(3, parseInt(post.importance, 10) || 1),
+        );
+        bar.style.width = `${(importance / 3) * 100}%`;
+        bar.classList.add(`level-${importance}`);
+      }
 
       document
         .querySelector(`#status_${post.status} .status-tasks`)
@@ -69,11 +95,105 @@ async function loadAllPosts() {
   }
 }
 
-async function fetchAndPopulateCollaborators(modalFragment) {
+function bindBoardNameInput() {
+  title.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      title.blur();
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      title.value = title.dataset.value || "";
+      title.blur();
+    }
+  });
+
+  title.addEventListener("blur", async () => {
+    if (title.readOnly) return;
+
+    const nextName = title.value.trim();
+    const prevName = title.dataset.value || "";
+
+    if (!nextName) {
+      title.value = prevName;
+      return;
+    }
+
+    if (nextName === prevName) return;
+
+    try {
+      const res = await fetchWithAuth(`/api/boards/${boardId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: nextName }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update board name");
+      }
+
+      boardName = nextName;
+      title.dataset.value = nextName;
+    } catch (err) {
+      console.log(err);
+      title.value = prevName;
+    }
+  });
+}
+
+async function fetchBoardUsers() {
   try {
     const usersResp = await fetchWithAuth(`/api/boards/${boardId}/users`);
-    if (!usersResp.ok) return;
+    if (!usersResp.ok) return null;
     const users = await usersResp.json();
+    boardUsers = users;
+    return users;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+function populateAssigneeSelect(container, selectedId) {
+  if (!container || typeof container.querySelector !== "function") return;
+
+  const select = container.querySelector("#assigned-to-input");
+  if (!select) return;
+
+  const currentValue =
+    selectedId !== undefined && selectedId !== null
+      ? String(selectedId)
+      : select.value;
+
+  select.replaceChildren();
+
+  const unassignedOption = document.createElement("option");
+  unassignedOption.value = "";
+  unassignedOption.textContent = "Unassigned";
+  select.appendChild(unassignedOption);
+
+  boardUsers.forEach((u) => {
+    const option = document.createElement("option");
+    option.value = u.user_id;
+    option.textContent = u.username;
+    select.appendChild(option);
+  });
+
+  select.value = currentValue || "";
+}
+
+function refreshAssigneeSelects(selectedId) {
+  const container = document.getElementById("modal-container");
+  if (!container) return;
+  populateAssigneeSelect(container, selectedId);
+}
+
+async function fetchAndPopulateCollaborators(modalFragment) {
+  try {
+    const users = await fetchBoardUsers();
+    if (!users) return;
 
     let container = null;
     if (modalFragment && typeof modalFragment.querySelector === "function") {
@@ -125,6 +245,7 @@ async function fetchAndPopulateCollaborators(modalFragment) {
 
       container.appendChild(userDiv);
     });
+    refreshAssigneeSelects();
   } catch (err) {
     console.log(err);
   }
@@ -208,7 +329,9 @@ async function revokeAccess(userId) {
 function addPostHandle(status) {
   updateStatus.id = null;
   updateStatus.board = parseInt(status);
-  showTemplateInModal(postModalTemp);
+  showTemplateInModal(postModalTemp, (newPostModal) => {
+    preparePostModal(newPostModal, null);
+  });
 }
 
 function optionBtnHandle(id) {
@@ -230,8 +353,25 @@ function editBtnHandle(id) {
   updateStatus.board = null;
 
   showTemplateInModal(postModalTemp, (newPostModal) => {
-    newPostModal.getElementById("title-input").value = post.title;
-    newPostModal.getElementById("desc-textarea").value = post.content;
+    preparePostModal(newPostModal, post);
+  });
+}
+
+function preparePostModal(modalFragment, post) {
+  const titleInput = modalFragment.getElementById("title-input");
+  const descInput = modalFragment.getElementById("desc-textarea");
+  const importanceInput = modalFragment.getElementById("importance-input");
+
+  if (titleInput) titleInput.value = post ? post.title : "";
+  if (descInput) descInput.value = post ? post.content : "";
+  if (importanceInput) {
+    importanceInput.value = post ? String(post.importance || 1) : "1";
+  }
+
+  populateAssigneeSelect(modalFragment, post ? post.assigned_to : "");
+
+  fetchBoardUsers().then(() => {
+    populateAssigneeSelect(modalFragment, post ? post.assigned_to : "");
   });
 }
 
@@ -270,9 +410,17 @@ function deleteModal() {
 function submitModal() {
   var title = document.querySelector(".title-input").value;
   var desc = document.querySelector(".desc-textarea").value;
-  if (title == "") return;
-  // should we change the logic in the backend so description is optional?
-  if (desc == "") return;
+  const importanceInput = document.getElementById("importance-input");
+  const assignedInput = document.getElementById("assigned-to-input");
+  const importance = importanceInput
+    ? Math.max(1, Math.min(3, parseInt(importanceInput.value, 10) || 1))
+    : 1;
+  const assignedTo =
+    assignedInput && assignedInput.value !== "" ? assignedInput.value : null;
+  if (title == "") {
+    showNotification("Missing title", true);
+    return
+  };
 
   // only clear and close if went through
   // update importance
@@ -283,7 +431,8 @@ function submitModal() {
         title: title,
         status: updateStatus.board,
         content: desc,
-        importance: 1,
+        importance: importance,
+        assigned_to: assignedTo,
       }),
       headers: { "Content-Type": "application/json" },
     }).then((resp) => {
@@ -302,8 +451,8 @@ function submitModal() {
         title: title,
         status: post.status,
         content: desc,
-        importance: post.importance,
-        assigned_to: post.assigned_to,
+        importance: importance,
+        assigned_to: assignedTo,
       }),
       headers: { "Content-Type": "application/json" },
     }).then((resp) => {
@@ -317,6 +466,10 @@ function submitModal() {
 function submitModalSuccess() {
   document.querySelector(".title-input").value = "";
   document.querySelector(".desc-textarea").value = "";
+  const importanceInput = document.getElementById("importance-input");
+  const assignedInput = document.getElementById("assigned-to-input");
+  if (importanceInput) importanceInput.value = "1";
+  if (assignedInput) assignedInput.value = "";
   hideModal();
 }
 

@@ -101,6 +101,38 @@ small {
   word-break: break-word;
 }
 
+.task-meta {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.importance-track {
+  height: 6px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.importance-bar {
+  height: 100%;
+  width: 33.33%;
+  background-color: #5cc77b;
+}
+
+.importance-bar.level-2 {
+  background-color: #f0c04c;
+}
+
+.importance-bar.level-3 {
+  background-color: #e36b6b;
+}
+
+.task-footer {
+  color: var(--muted-color);
+}
+
 .dragging {
   opacity: 0.5;
 }
