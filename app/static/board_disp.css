@@ -50,7 +50,7 @@ button {
   text-align: left;
   user-select: none;
   background-color: var(--fg-color);
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 10px;
   margin: 0px 5px;
   width: 400px;
@@ -89,9 +89,10 @@ button {
 }
 
 .task {
-  background: var(--fg-color);
+  background: var(--lighter-fg-color);
   margin: 12px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 20px;
 }
 
 small {
@@ -112,7 +113,6 @@ small {
   height: 100px;
   padding: 3px;
   user-select: none;
-  background: cyan;
   cursor: grabbing;
 }
 
@@ -120,10 +120,10 @@ small {
   display: grid;
   place-items: center;
   height: calc(100% - 3px);
-  border: 2px dashed #000;
+  background: var(--lighter-fg-color);
+  margin: 12px;
   border-radius: 10px;
-  background: cyan;
-  color: #000;
+  padding: 20px;
 }
 
 .task-header {
@@ -166,11 +166,11 @@ small {
 .status-addnew-box {
   width: 100%;
   text-align: center;
-  padding: 25px;
+  padding: 10px;
   border: none;
   color: var(--muted-color);
   border-radius: 10px;
-  background-color: var(--lighter-fg-color);
+  background-color: var(--fg-color);
 }
 
 .status-addnew:hover > * {

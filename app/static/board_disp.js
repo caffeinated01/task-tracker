@@ -364,7 +364,7 @@ function dragStartHandle(e) {
   );
   if (parentStatusBox) {
     const statusName =
-      parentStatusBox.querySelector(".status-head > h2").textContent;
+      parentStatusBox.querySelector(".status-head > p").textContent;
     preview.querySelector("h3").textContent =
       'Set status to "' + statusName + '"';
     previewOffset.originalStatus = statusName;
@@ -399,7 +399,7 @@ function dragOverHandle(e) {
 
   if (parentStatusBox) {
     const statusName =
-      parentStatusBox.querySelector(".status-head > h2").textContent;
+      parentStatusBox.querySelector(".status-head > p").textContent;
     preview.querySelector("h3").textContent =
       'Set status to "' + statusName + '"';
     if (statusName == previewOffset.originalStatus)
