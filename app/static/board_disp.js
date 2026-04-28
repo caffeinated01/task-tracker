@@ -7,6 +7,8 @@
 // fetch board data from API
 let boardId = "";
 let boardContent;
+let currentUserRole = null;
+let currentUsername = null;
 const postTemplate = document.getElementById("task-template");
 
 async function loadAllPosts() {
@@ -14,6 +16,19 @@ async function loadAllPosts() {
   boardId = currentPath[currentPath.length - 1];
 
   try {
+    const boardResp = await fetchWithAuth(`/api/boards/${boardId}`);
+
+    if (boardResp.status === 404) {
+      window.location.pathname = "/boards";
+      return;
+    }
+
+    if (boardResp.ok) {
+      const boardInfo = await boardResp.json();
+      currentUserRole = boardInfo.role;
+      currentUsername = boardInfo.username;
+    }
+
     // clear every row first
     document.querySelectorAll(".status-tasks").forEach((row) => {
       row.innerHTML = "";
@@ -53,6 +68,67 @@ async function loadAllPosts() {
   }
 }
 
+async function fetchAndPopulateCollaborators(modalFragment) {
+  try {
+    const usersResp = await fetchWithAuth(`/api/boards/${boardId}/users`);
+    if (!usersResp.ok) return;
+    const users = await usersResp.json();
+
+    let container = null;
+    if (modalFragment && typeof modalFragment.querySelector === "function") {
+      container = modalFragment.querySelector("#collaborators-list");
+    }
+    if (!container) container = document.getElementById("collaborators-list");
+    if (!container) return;
+
+    container.replaceChildren();
+
+    users.forEach((u) => {
+      const userDiv = document.createElement("div");
+      userDiv.className = "user-details";
+
+      const usernameGroup = document.createElement("div");
+      usernameGroup.className = "username-group";
+
+      const icon = document.createElement("div");
+      icon.className = "user-icon";
+      icon.textContent = u.username ? u.username.charAt(0).toUpperCase() : "?";
+
+      const nameP = document.createElement("p");
+      nameP.className = "text-md";
+      nameP.textContent = u.username;
+
+      usernameGroup.appendChild(icon);
+      usernameGroup.appendChild(nameP);
+
+      userDiv.appendChild(usernameGroup);
+
+      const roleGroup = document.createElement("div");
+      roleGroup.className = "user-role-group";
+
+      const roleP = document.createElement("p");
+      roleP.className = "text-md user-role";
+      roleP.textContent = u.role == 1 ? "Owner" : "Editor";
+
+      roleGroup.appendChild(roleP);
+
+      if (currentUserRole == 1 && u.role != 1) {
+        const revokeBtn = document.createElement("button");
+        revokeBtn.className = "revoke-button";
+        revokeBtn.textContent = "✕";
+        revokeBtn.dataset.handler = "revoke_" + u.user_id;
+        roleGroup.appendChild(revokeBtn);
+      }
+
+      userDiv.appendChild(roleGroup);
+
+      container.appendChild(userDiv);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 /*
 handle general clicking on webpage, this should cover:
 *   clicking on dropdown menus (all forms)
@@ -67,6 +143,8 @@ var clickMap = {
   deletemodal: deleteModal,
   addpost: addPostHandle,
   shareboard: shareBoardHandle,
+  sharesubmit: shareSubmit,
+  revoke: revokeAccess,
 };
 
 var updateStatus = { board: null, id: null };
@@ -76,7 +154,53 @@ let shareModalTemp = document.getElementById("share-modal-template");
 let pendingDeleteTaskId = null;
 
 function shareBoardHandle() {
-  showTemplateInModal(shareModalTemp);
+  showTemplateInModal(shareModalTemp, fetchAndPopulateCollaborators);
+}
+
+async function shareSubmit() {
+  const input = document.getElementById("share-input");
+  if (!input) return;
+  const username = input.value.trim();
+  if (!username) return;
+
+  try {
+    const resp = await fetchWithAuth(`/api/boards/${boardId}/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username }),
+    });
+
+    if (resp.ok) {
+      showNotification(`Board shared with ${username}`, false);
+      input.value = "";
+      await fetchAndPopulateCollaborators();
+    } else {
+      const err = await resp.json();
+      showNotification(err.message, true);
+    }
+  } catch (err) {
+    console.log(err);
+    showNotification("Failed to share board", true);
+  }
+}
+
+async function revokeAccess(userId) {
+  try {
+    const resp = await fetchWithAuth(`/api/boards/${boardId}/users/${userId}`, {
+      method: "DELETE",
+    });
+
+    if (resp.ok) {
+      showNotification("Access revoked successfully", false);
+      await fetchAndPopulateCollaborators();
+    } else {
+      const err = await resp.json();
+      showNotification(err.message, true);
+    }
+  } catch (err) {
+    console.log(err);
+    showNotification("Failed to revoke access", true);
+  }
 }
 
 function addPostHandle(status) {
@@ -104,7 +228,7 @@ function editBtnHandle(id) {
   updateStatus.board = null;
 
   showTemplateInModal(postModalTemp, (newPostModal) => {
-    newPostModal.getElementById("title-textarea").value = post.title;
+    newPostModal.getElementById("title-input").value = post.title;
     newPostModal.getElementById("desc-textarea").value = post.content;
   });
 }

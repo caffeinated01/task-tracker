@@ -46,6 +46,10 @@ def fetch_board(id):
     if not board:
         return jsonify({"message": "Board not found"}), 404
 
+    user = get_user_by_id(db, user_id)
+    board["username"] = user["username"]
+    board["user_id"] = user_id
+
     return jsonify(board)
 
 

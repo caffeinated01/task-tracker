@@ -192,23 +192,30 @@
         placeholder="Add collaborators to this board"
         rows="1"
         class="title-input text-md"
-        id="title-input"
+        id="share-input"
       ></input>
       <button
         class="modal-button submit-btn text-lg"
-        data-handler="submitmodal"
+        data-handler="sharesubmit"
       >
         Share
       </button>
       <div class="collaborators-list-wrapper">
         <p class="text-xl">People with access</p>
         <div id="collaborators-list">
-          <div class="user-details">
-            <div class="username-group">
-              <div class="user-icon">A</div>
-              <p class="text-md">Admin</p>
+          <div>
+            <div class="user-details">
+              <div class="username-group">
+                <div class="user-icon">A</div>
+                <p class="text-md">Admin</p>
+              </div>
+              <div class="user-role-group">
+                <p class="text-md user-role">Editor</p>
+                <button class="revoke-button">
+                  ✕
+                </button>
+              </div>
             </div>
-            <p class="text-md user-role">Editor</p>
           </div>
         </div>
       </div>

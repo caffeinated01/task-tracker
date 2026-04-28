@@ -183,9 +183,6 @@ small {
   flex-direction: column; */
 }
 
-#collaborators-list {
-}
-
 .user-details {
   display: flex;
   justify-content: space-between;
@@ -210,6 +207,31 @@ small {
   justify-content: center;
 }
 
+.user-role-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
 .user-role {
   color: var(--muted-color);
+}
+
+.revoke-button {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  color: var(--font-color);
+  background: none;
+}
+
+.revoke-button:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
