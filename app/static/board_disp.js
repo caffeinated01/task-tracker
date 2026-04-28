@@ -44,18 +44,32 @@ async function loadAllPosts() {
       title.classList.toggle("is-readonly", !canEditBoard);
     }
 
-    // clear every row first
-    document.querySelectorAll(".status-tasks").forEach((row) => {
-      row.innerHTML = "";
-    });
+    await fetchBoardUsers();
 
     boardContent = await fetchWithAuth(`/api/boards/${boardId}/tasks`).then(
       (r) => r.json(),
     );
-    boardContent.forEach((post) => {
-      // console.log(post);
+    renderTasks();
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
 
-      // update fields which are supposed to have post id
+function renderTasks() {
+  if (!Array.isArray(boardContent)) return;
+
+  document.querySelectorAll(".status-tasks").forEach((row) => {
+    row.innerHTML = "";
+  });
+
+  document.querySelectorAll(".status").forEach((statusEl) => {
+    const statusId = parseInt(statusEl.id.replace("status_", ""), 10);
+    const tasks = boardContent.filter((post) => post.status === statusId);
+    const { category, direction } = getSortConfig(statusEl);
+    const sorted = sortTasks(tasks, category, direction);
+
+    sorted.forEach((post) => {
       const postClone = document.importNode(postTemplate.content, true);
       postClone.querySelector(".task").id = "task_" + post.task_id;
       for (child of postClone
@@ -66,7 +80,6 @@ async function loadAllPosts() {
         }
       }
 
-      // update textual content
       postClone.querySelector(".task-header > h3").textContent = post.title;
       postClone.querySelector(".task-desc").textContent = post.content;
 
@@ -85,14 +98,60 @@ async function loadAllPosts() {
         bar.classList.add(`level-${importance}`);
       }
 
-      document
-        .querySelector(`#status_${post.status} .status-tasks`)
-        .appendChild(postClone);
+      statusEl.querySelector(".status-tasks").appendChild(postClone);
     });
-  } catch (err) {
-    console.log(err);
-    return;
-  }
+  });
+}
+
+function getSortConfig(statusEl) {
+  const categorySelect = statusEl.querySelector(".sort-category");
+  const optionSelect = statusEl.querySelector(".sort-option");
+  return {
+    category: categorySelect ? categorySelect.value : "name",
+    direction: optionSelect ? optionSelect.value : "asc",
+  };
+}
+
+function sortTasks(tasks, category, direction) {
+  const dir = direction === "desc" ? -1 : 1;
+  const copy = [...tasks];
+
+  const toTime = (value) => {
+    if (!value) return 0;
+    const time = new Date(value).getTime();
+    return Number.isNaN(time) ? 0 : time;
+  };
+
+  copy.sort((a, b) => {
+    let aVal = "";
+    let bVal = "";
+
+    switch (category) {
+      case "created_at":
+        aVal = toTime(a.created_at);
+        bVal = toTime(b.created_at);
+        break;
+      case "created_by":
+        aVal = (a.created_by || "").toLowerCase();
+        bVal = (b.created_by || "").toLowerCase();
+        break;
+      case "importance":
+        aVal = parseInt(a.importance, 10) || 0;
+        bVal = parseInt(b.importance, 10) || 0;
+        break;
+      case "name":
+      default:
+        aVal = (a.title || "").toLowerCase();
+        bVal = (b.title || "").toLowerCase();
+        break;
+    }
+
+    if (aVal < bVal) return -1 * dir;
+    if (aVal > bVal) return 1 * dir;
+    return 0;
+  });
+
+  return copy;
 }
 
 function bindBoardNameInput() {
@@ -419,8 +478,8 @@ function submitModal() {
     assignedInput && assignedInput.value !== "" ? assignedInput.value : null;
   if (title == "") {
     showNotification("Missing title", true);
-    return
-  };
+    return;
+  }
 
   // only clear and close if went through
   // update importance
@@ -622,3 +681,12 @@ document.addEventListener("dragstart", dragStartHandle);
 document.addEventListener("dragover", dragOverHandle);
 document.addEventListener("dragend", dragEndHandle);
 document.addEventListener("click", clickHandle);
+document.addEventListener("change", (event) => {
+  if (!event.target) return;
+  if (
+    event.target.classList.contains("sort-category") ||
+    event.target.classList.contains("sort-option")
+  ) {
+    renderTasks();
+  }
+});

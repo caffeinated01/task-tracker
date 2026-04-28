@@ -77,6 +77,41 @@ button {
   margin-bottom: 5px;
 }
 
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.sort-label {
+  color: var(--muted-color);
+  font-size: 0.75rem;
+}
+
+.sort-category,
+.sort-option {
+  background-color: var(--lighter-fg-color);
+  color: var(--font-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.sort-category:hover,
+.sort-option:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sort-category:focus,
+.sort-option:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
 .status-list {
   flex: 1;
   overflow-x: hidden;

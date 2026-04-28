@@ -38,18 +38,19 @@
       <div class="flex-status">
         <div class="status-head">
           <p class="status-title text-2xl">Pending</p>
-          <span>Sort by:</span>
-          <select name="sort-category" id="sort-category">
-            <option value="">Name</option>
-            <option value="">Date created</option>
-            <option value="">Date updated</option>
-            <option value="">Creator</option>
-            <option value="">Importance</option>
-          </select>
-          <select name="sort-option" id="sort-option">
-            <option value="">ascending</option>
-            <option value="">descending</option>
-          </select>
+          <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <select name="sort-category" class="sort-category">
+              <option value="name">Name</option>
+              <option value="created_at">Date created</option>
+              <option value="created_by">Creator</option>
+              <option value="importance">Importance</option>
+            </select>
+            <select name="sort-option" class="sort-option">
+              <option value="asc">ascending</option>
+              <option value="desc">descending</option>
+            </select>
+          </div>
         </div>
         <div class="status-list">
           <div class="status-tasks"></div>
@@ -65,18 +66,19 @@
       <div class="flex-status">
         <div class="status-head">
           <p class="status-title text-2xl">In progress</p>
-          <span>Sort by:</span>
-          <select name="sort-category" id="sort-category">
-            <option value="">Name</option>
-            <option value="">Date created</option>
-            <option value="">Date updated</option>
-            <option value="">Creator</option>
-            <option value="">Importance</option>
-          </select>
-          <select name="sort-option" id="sort-option">
-            <option value="">ascending</option>
-            <option value="">descending</option>
-          </select>
+          <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <select name="sort-category" class="sort-category">
+              <option value="name">Name</option>
+              <option value="created_at">Date created</option>
+              <option value="created_by">Creator</option>
+              <option value="importance">Importance</option>
+            </select>
+            <select name="sort-option" class="sort-option">
+              <option value="asc">ascending</option>
+              <option value="desc">descending</option>
+            </select>
+          </div>
         </div>
         <div class="status-list">
           <div class="status-tasks"></div>
@@ -92,18 +94,19 @@
       <div class="flex-status">
         <div class="status-head">
           <p class="status-title text-2xl">Done</p>
-          <span>Sort by:</span>
-          <select name="sort-category" id="sort-category">
-            <option value="">Name</option>
-            <option value="">Date created</option>
-            <option value="">Date updated</option>
-            <option value="">Creator</option>
-            <option value="">Importance</option>
-          </select>
-          <select name="sort-option" id="sort-option">
-            <option value="">ascending</option>
-            <option value="">descending</option>
-          </select>
+          <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <select name="sort-category" class="sort-category">
+              <option value="name">Name</option>
+              <option value="created_at">Date created</option>
+              <option value="created_by">Creator</option>
+              <option value="importance">Importance</option>
+            </select>
+            <select name="sort-option" class="sort-option">
+              <option value="asc">ascending</option>
+              <option value="desc">descending</option>
+            </select>
+          </div>
         </div>
         <div class="status-list">
           <div class="status-tasks"></div>
