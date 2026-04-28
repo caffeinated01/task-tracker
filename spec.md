@@ -19,7 +19,9 @@
 {
   "id": "integer",
   "name": "string",
-  "role": "string"
+  "role": "string",
+  "username": "string",
+  "user_id": "user_id"
 }
 ```
 
