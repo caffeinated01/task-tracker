@@ -1,3 +1,4 @@
+from app.crud.task import delete_task, get_task_by_id_for_user, update_task_details, get_tasks_assigned_to_user
 from flask import Blueprint, g, jsonify
 
 from app.db import get_db
@@ -56,3 +57,15 @@ def purge_task(id):
     delete_task(db, id)
 
     return jsonify({"message": "Task deleted successfully"}), 200
+
+
+@bp.route("/assigned", methods=["GET"])
+@access_token_required
+def fetch_assigned_tasks():
+    user_id = g.current_user["user_id"]
+
+    db = get_db()
+
+    tasks = get_tasks_assigned_to_user(db, user_id)
+    
+    return jsonify(tasks)

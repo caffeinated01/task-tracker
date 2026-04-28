@@ -47,6 +47,11 @@
         </a>
       </template>
     </div>
+    <div class="assigned-tasks-section">
+      <p class="title text-3xl">Your Tasks</p>
+      <div id="assigned-tasks-list" class="assigned-tasks-grid">
+      </div>
+    </div>
   </div>
 </div>
 
@@ -71,6 +76,19 @@
       <button class="modal-button submit-btn text-lg" data-handler="createboard">Create</button>
     </div>
   </div>
+</template>
+
+<template id="assigned-task-template">
+    <a class="assigned-task-card" href="#">
+        <div class="task-card-header">
+            <span class="text-sm board-tag"></span>
+            <span class="importance-dot"></span>
+        </div>
+        <p class="text-lg task-title"></p>
+        <div class="task-card-footer">
+            <span class="text-sm status-info"></span>
+        </div>
+    </a>
 </template>
 {% endblock %} 
 

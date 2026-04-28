@@ -33,6 +33,57 @@
   font-weight: 500;
 }
 
+.assigned-tasks-section {
+  margin-top: 60px;
+}
+
+.assigned-tasks-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.assigned-task-card {
+  background-color: var(--fg-color);
+  width: 200px;
+  padding: 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--font-color);
+  transition: transform 0.2s;
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.board-tag {
+  color: var(--muted-color);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.importance-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.task-title {
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.task-card-footer {
+  margin-top: 12px;
+  color: var(--muted-color);
+}
+
 .board-card {
   width: var(--board-card-width);
   height: var(--board-card-height);

@@ -71,3 +71,18 @@ def update_task_details(db, task_id, data):
 def delete_task(db: sqlite3.Connection, task_id):
     db.execute("DELETE FROM tasks WHERE task_id = ?", (task_id,))
     db.commit()
+
+
+def get_tasks_assigned_to_user(db: sqlite3.Connection, user_id):
+    tasks = db.execute(
+        """
+        SELECT t.task_id, t.title, t.status, t.importance, t.board_id, 
+               b.name AS board_name, u.username AS created_by
+        FROM tasks t
+        JOIN boards b ON t.board_id = b.board_id
+        JOIN users u ON t.created_by = u.user_id
+        WHERE t.assigned_to = ?
+        """, (user_id,),
+    ).fetchall()
+
+    return [dict(task) for task in tasks]

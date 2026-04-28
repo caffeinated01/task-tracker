@@ -10,6 +10,14 @@ const BoardRoleNames = {
   [BoardRole.EDITOR]: "Editor",
 };
 
+
+const StatusNames = {
+  1: "Pending",
+  2: "In progress",
+  3: "Done",
+}
+
+
 const boardsList = document.getElementById("boards-list");
 const template = document.getElementById("board-card-template");
 const createBoardModalTemplate = document.getElementById(
@@ -89,6 +97,50 @@ async function createBoardFromModal() {
   }
 }
 
+async function fetchAndDisplayAssignedTasks() {
+  const taskList = document.getElementById("assigned-tasks-list");
+  const taskTemplate = document.getElementById("assigned-task-template");
+
+  try {
+    const response = await fetchWithAuth("/api/tasks/assigned");
+    const tasks = await response.json();
+
+    taskList.innerHTML = "";
+
+    if (tasks.length === 0) {
+      taskList.innerHTML =
+        '<p class="text-lg" style="color: var(--muted-color)">No tasks assigned to you</p>';
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    tasks.forEach((task) => {
+      const clone = taskTemplate.content.cloneNode(true);
+
+      const card = clone.querySelector(".assigned-task-card");
+      const boardTag = clone.querySelector(".board-tag");
+      const title = clone.querySelector(".task-title");
+      const status = clone.querySelector(".status-info");
+      const dot = clone.querySelector(".importance-dot");
+
+      card.href = `/boards/${task.board_id}`;
+      boardTag.textContent = task.board_name;
+      title.textContent = task.title;
+      status.textContent = `${StatusNames[task.status]}`;
+
+      const colors = ["#5cc77b", "#f0c04c", "#e36b6b"];
+      dot.style.backgroundColor = colors[(task.importance || 1) - 1];
+
+      fragment.appendChild(clone);
+    });
+
+    taskList.appendChild(fragment);
+  } catch (err) {
+    console.error("Failed to load assigned tasks", err);
+  }
+}
+
 function clickHandle(event) {
   if (!event.target.dataset.handler) return;
 
@@ -98,6 +150,9 @@ function clickHandle(event) {
   clickMap[handlerName]();
 }
 
-document.addEventListener("DOMContentLoaded", fetchAndDisplayBoards);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchAndDisplayBoards();
+  fetchAndDisplayAssignedTasks();
+});
 document.addEventListener("boardCreated", fetchAndDisplayBoards);
 document.addEventListener("click", clickHandle);
