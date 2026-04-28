@@ -10,12 +10,17 @@
 {% block content %}
 <nav class="navbar">
   <div class="navbar-container">
-    <input
-      type="text"
-      class="navbar-big navbar-big-input text-2xl"
-      id="board-name"
-      aria-label="Board name"
-    />
+    <div class="navbar-big-group">
+      <a href="/boards" class="navbar-big">
+        <span class="text-2xl">Kanban</span>
+      </a>
+      <input
+        type="text"
+        class="navbar-big navbar-big-input text-2xl"
+        id="board-name"
+        aria-label="Board name"
+      />
+    </div>
     <div class="navbar-menu">
       <button data-handler="shareboard" class="navbar-button text-md">Share Board</button> 
       <div class="navbar-user-dropdown">

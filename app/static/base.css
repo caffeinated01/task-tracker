@@ -347,6 +347,13 @@ body {
   justify-content: space-between;
 }
 
+.navbar-big-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
 .navbar-big {
   text-decoration: none;
   color: var(--font-color);
