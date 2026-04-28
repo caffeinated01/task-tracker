@@ -16,6 +16,7 @@ textarea {
   --fg-color: #212121;
   --lighter-fg-color: #2e2f33;
   --muted-color: #aaaaaa;
+  --page-max-width: 1460px;
 
   background-color: var(--bg-color);
   color: var(--font-color);

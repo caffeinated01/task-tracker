@@ -10,12 +10,12 @@
   display: flex;
   justify-content: center;
   padding: 0px 16px;
-  padding-top: 32px;
+  padding-top: 92px;
 }
 
 .boards-page-container {
   width: 100%;
-  max-width: 1460px;
+  max-width: var(--page-max-width);
 }
 
 #boards-container {
@@ -102,7 +102,7 @@
   white-space: nowrap;
 }
 
-.username {
+.role {
   margin-left: 8px;
   margin-right: 8px;
 

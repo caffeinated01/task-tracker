@@ -17,7 +17,18 @@ def fetch_boards():
     user_id = g.current_user["user_id"]
 
     boards = get_boards_for_user(db, user_id)
-    return jsonify(boards)
+
+    user = get_user_by_id(db, user_id)
+
+    res = {
+        "boards": boards,
+        "user": {
+            "username": user["username"],
+            "user_id": user_id
+        }
+    }
+
+    return jsonify(res)
 
 
 @bp.route("/", methods=["POST"])
@@ -47,10 +58,14 @@ def fetch_board(id):
         return jsonify({"message": "Board not found"}), 404
 
     user = get_user_by_id(db, user_id)
-    board["username"] = user["username"]
-    board["user_id"] = user_id
-
-    return jsonify(board)
+    res = {
+        "board": board,
+        "user": {
+            "username": user["username"],
+            "user_id": user_id
+        }
+    }
+    return jsonify(res)
 
 
 @bp.route("/<string:id>", methods=["PATCH"])

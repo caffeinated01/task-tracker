@@ -25,8 +25,8 @@ async function loadAllPosts() {
 
     if (boardResp.ok) {
       const boardInfo = await boardResp.json();
-      currentUserRole = boardInfo.role;
-      currentUsername = boardInfo.username;
+      currentUserRole = boardInfo.board.role;
+      currentUsername = boardInfo.user.username;
     }
 
     // clear every row first

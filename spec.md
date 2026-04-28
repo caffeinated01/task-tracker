@@ -19,9 +19,7 @@
 {
   "id": "integer",
   "name": "string",
-  "role": "string",
-  "username": "string",
-  "user_id": "user_id"
+  "role": "string"
 }
 ```
 
@@ -147,7 +145,15 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
 
 - **response**
   - **200** - OK
-    - `[Board]`
+    - ```json
+      {
+        "boards": [Board],
+        "user": {
+          "username": "string",
+          "user_id": "user_id"
+        }
+      }
+      ```
 
 ### POST `/api/boards/`
 
@@ -172,7 +178,15 @@ Board route group. **ALL** routes require a valid `access_token` cookie.
 
 - **response**
   - **200** - OK
-    - `Board`
+    - ```json
+      {
+        "board": Board,
+        "user": {
+          "username": "string",
+          "user_id": "user_id"
+        }
+      }
+      ```
   - **404** - Board not found
     - `ResponseMessage`
 
