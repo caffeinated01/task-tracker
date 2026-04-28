@@ -31,14 +31,8 @@ button {
   padding: 6px 10px;
 }
 
-.return-button {
-  border: 1px solid lime;
-  border-radius: 3px;
-  flex-grow: 0;
-}
-
 .board-container {
-  background-color: blue;
+  background-color: var(--bg-color);
   text-align: center;
   padding: 15px;
   overflow-x: auto;
@@ -48,17 +42,23 @@ button {
   min-width: 0;
   height: 100%;
   width: calc(100% - 30px);
-  padding-top: var(--padding-below-navbar);
+  padding-top: calc(var(--padding-below-navbar) + 10px);
 }
 
 .status {
   display: inline-block;
   text-align: left;
   user-select: none;
-  background-color: cyan;
-  margin: 5px;
+  background-color: var(--fg-color);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 0px 5px;
   width: 400px;
-  height: calc(100% - 10px);
+  height: calc(100% - 60px);
+}
+
+.status-title {
+  font-weight: 500px;
 }
 
 .flex-status {
@@ -167,15 +167,14 @@ small {
   width: 100%;
   text-align: center;
   padding: 25px;
-  border: 2px dashed #000;
+  border: none;
+  color: var(--muted-color);
   border-radius: 10px;
-  background-color: #ff0;
-  font-weight: 600;
-  font-size: 18px;
+  background-color: var(--lighter-fg-color);
 }
 
 .status-addnew:hover > * {
-  background-color: #880;
+  filter: brightness(1.2);
 }
 
 .collaborators-list-wrapper {
