@@ -266,7 +266,7 @@ function deleteModal() {
 }
 
 function submitModal() {
-  var title = document.querySelector(".title-textarea").value;
+  var title = document.querySelector(".title-input").value;
   var desc = document.querySelector(".desc-textarea").value;
   if (title == "") return;
   // should we change the logic in the backend so description is optional?
@@ -313,7 +313,7 @@ function submitModal() {
 }
 
 function submitModalSuccess() {
-  document.querySelector(".title-textarea").value = "";
+  document.querySelector(".title-input").value = "";
   document.querySelector(".desc-textarea").value = "";
   hideModal();
 }
