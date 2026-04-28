@@ -365,6 +365,7 @@ body {
 }
 
 .navbar-big-input {
+  font-weight: 400;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
