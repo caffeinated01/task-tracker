@@ -48,6 +48,7 @@ button {
   min-width: 0;
   height: 100%;
   width: calc(100% - 30px);
+  padding-top: var(--padding-below-navbar);
 }
 
 .status {

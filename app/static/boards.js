@@ -41,6 +41,7 @@ async function fetchAndDisplayBoards() {
   }
 
   currentUsername = boardsInfo.user.username;
+  displayUsername(currentUsername);
 
   boardsList.appendChild(fragment);
 }
@@ -49,6 +50,7 @@ const createBoardButton = document.getElementById("create-board-btn");
 
 const clickMap = {
   createboard: createBoardFromModal,
+  logout: handleLogout,
 };
 
 createBoardButton.addEventListener("click", () => {

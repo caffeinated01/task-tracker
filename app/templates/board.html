@@ -8,20 +8,28 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex-base">
-  <div class="base header">
-    <h2 class="header-title">Boards</h2>
-    <div class="header-buttons">
-      <!-- <button class="return-button" onclick="loadAllPosts()">Refresh</button> -->
-      <button data-handler="shareboard" class="return-button">Share</button>
-      <button
-        class="return-button"
-        onclick="window.location.pathname = '/boards'"
-      >
-        Return to home
-      </button>
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="/boards" class="navbar-brand">
+      <span class="text-2xl">Kanban</span>
+    </a>
+    <div class="navbar-menu">
+      <button data-handler="shareboard" class="navbar-button text-md">Share Board</button> 
+      <div class="navbar-user-dropdown">
+        <button class="navbar-button navbar-user-button" data-handler="usermenubtn">
+          <div class="avatar">
+            <span id="user-avatar" class="text-md"></span>
+          </div>
+          <span id="user-username" class="text-md"></span>
+        </button>
+        <div class="navbar-user-menu" hidden>
+          <a class="navbar-user-menu-item" data-handler="logout">Logout</a>
+        </div>
+      </div>
     </div>
   </div>
+</nav>
+<div class="flex-base">
   <div class="base board-container">
     <div class="status" id="status_1">
       <div class="flex-status">

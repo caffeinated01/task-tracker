@@ -27,6 +27,7 @@ async function loadAllPosts() {
       const boardInfo = await boardResp.json();
       currentUserRole = boardInfo.board.role;
       currentUsername = boardInfo.user.username;
+      displayUsername(currentUsername);
     }
 
     // clear every row first
@@ -145,6 +146,7 @@ var clickMap = {
   shareboard: shareBoardHandle,
   sharesubmit: shareSubmit,
   revoke: revokeAccess,
+  logout: handleLogout,
 };
 
 var updateStatus = { board: null, id: null };
