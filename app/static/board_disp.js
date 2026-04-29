@@ -15,6 +15,39 @@ const title = document.querySelector("#board-name");
 let boardNameBound = false;
 let boardUsers = [];
 
+/*
+handle general clicking on webpage, this should cover:
+*   clicking on dropdown menus (all forms)
+*   modal buttons
+*/
+var clickMap = {
+  optionbtn: optionBtnHandle,
+  editbtn: editBtnHandle,
+  deletebtn: deleteBtnHandle,
+  submitmodal: submitModal,
+  deletemodal: deleteModal,
+  addpost: addPostHandle,
+  shareboard: shareBoardHandle,
+  sharesubmit: shareSubmit,
+  revoke: revokeAccess,
+  logout: handleLogout,
+};
+
+var updateStatus = { board: null, id: null };
+let postModalTemp = document.getElementById("post-modal-template");
+let deleteModalTemp = document.getElementById("delete-modal-template");
+let shareModalTemp = document.getElementById("share-modal-template");
+let pendingDeleteTaskId = null;
+
+// handle dragging on webpage
+let preview = document.querySelector(".hover-preview");
+let previewOffset = { x: null, y: null, originalStatus: null };
+let draggingTask = false;
+
+const emptyImg = document.createElement("img");
+emptyImg.src =
+  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+
 async function loadAllPosts() {
   const currentPath = window.location.pathname.split("/");
   boardId = currentPath[currentPath.length - 1];
@@ -54,6 +87,67 @@ async function loadAllPosts() {
     console.log(err);
     return;
   }
+}
+
+async function fetchBoardUsers() {
+  try {
+    const usersResp = await fetchWithAuth(`/api/boards/${boardId}/users`);
+    if (!usersResp.ok) return null;
+    const users = await usersResp.json();
+    boardUsers = users;
+    return users;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+function bindBoardNameInput() {
+  title.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      title.blur();
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      title.value = title.dataset.value || "";
+      title.blur();
+    }
+  });
+
+  title.addEventListener("blur", async () => {
+    if (title.readOnly) return;
+
+    const nextName = title.value.trim();
+    const prevName = title.dataset.value || "";
+
+    if (!nextName) {
+      title.value = prevName;
+      return;
+    }
+
+    if (nextName === prevName) return;
+
+    try {
+      const res = await fetchWithAuth(`/api/boards/${boardId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: nextName }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update board name");
+      }
+
+      boardName = nextName;
+      title.dataset.value = nextName;
+    } catch (err) {
+      console.log(err);
+      title.value = prevName;
+    }
+  });
 }
 
 function renderTasks() {
@@ -154,67 +248,6 @@ function sortTasks(tasks, category, direction) {
   return copy;
 }
 
-function bindBoardNameInput() {
-  title.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      title.blur();
-    }
-    if (event.key === "Escape") {
-      event.preventDefault();
-      title.value = title.dataset.value || "";
-      title.blur();
-    }
-  });
-
-  title.addEventListener("blur", async () => {
-    if (title.readOnly) return;
-
-    const nextName = title.value.trim();
-    const prevName = title.dataset.value || "";
-
-    if (!nextName) {
-      title.value = prevName;
-      return;
-    }
-
-    if (nextName === prevName) return;
-
-    try {
-      const res = await fetchWithAuth(`/api/boards/${boardId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: nextName }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update board name");
-      }
-
-      boardName = nextName;
-      title.dataset.value = nextName;
-    } catch (err) {
-      console.log(err);
-      title.value = prevName;
-    }
-  });
-}
-
-async function fetchBoardUsers() {
-  try {
-    const usersResp = await fetchWithAuth(`/api/boards/${boardId}/users`);
-    if (!usersResp.ok) return null;
-    const users = await usersResp.json();
-    boardUsers = users;
-    return users;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
 function populateAssigneeSelect(container, selectedId) {
   if (!container || typeof container.querySelector !== "function") return;
 
@@ -310,30 +343,15 @@ async function fetchAndPopulateCollaborators(modalFragment) {
   }
 }
 
-/*
-handle general clicking on webpage, this should cover:
-*   clicking on dropdown menus (all forms)
-*   modal buttons
-*/
-
-var clickMap = {
-  optionbtn: optionBtnHandle,
-  editbtn: editBtnHandle,
-  deletebtn: deleteBtnHandle,
-  submitmodal: submitModal,
-  deletemodal: deleteModal,
-  addpost: addPostHandle,
-  shareboard: shareBoardHandle,
-  sharesubmit: shareSubmit,
-  revoke: revokeAccess,
-  logout: handleLogout,
-};
-
-var updateStatus = { board: null, id: null };
-let postModalTemp = document.getElementById("post-modal-template");
-let deleteModalTemp = document.getElementById("delete-modal-template");
-let shareModalTemp = document.getElementById("share-modal-template");
-let pendingDeleteTaskId = null;
+function clickHandle(e) {
+  // https://stackoverflow.com/questions/46732637/best-way-to-handle-clicks-on-buttons-in-javascript-vanilla
+  // do something similar to this for edit, dropdowns and shit
+  if (!e.target.dataset.handler) return;
+  handlerArgs = e.target.dataset.handler.split("_");
+  if (!clickMap[handlerArgs[0]]) return;
+  if (handlerArgs.length == 1) clickMap[handlerArgs[0]]();
+  else if (handlerArgs.length == 2) clickMap[handlerArgs[0]](handlerArgs[1]);
+}
 
 function shareBoardHandle() {
   showTemplateInModal(shareModalTemp, fetchAndPopulateCollaborators);
@@ -531,26 +549,6 @@ function submitModalSuccess() {
   if (assignedInput) assignedInput.value = "";
   hideModal();
 }
-
-function clickHandle(e) {
-  // https://stackoverflow.com/questions/46732637/best-way-to-handle-clicks-on-buttons-in-javascript-vanilla
-  // do something similar to this for edit, dropdowns and shit
-  if (!e.target.dataset.handler) return;
-  handlerArgs = e.target.dataset.handler.split("_");
-  if (!clickMap[handlerArgs[0]]) return;
-  if (handlerArgs.length == 1) clickMap[handlerArgs[0]]();
-  else if (handlerArgs.length == 2) clickMap[handlerArgs[0]](handlerArgs[1]);
-}
-
-// handle dragging on webpage
-
-let preview = document.querySelector(".hover-preview");
-let previewOffset = { x: null, y: null, originalStatus: null };
-let draggingTask = false;
-
-const emptyImg = document.createElement("img");
-emptyImg.src =
-  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
 function dragStartHandle(e) {
   console.log(e);
