@@ -30,6 +30,8 @@ var clickMap = {
   addpost: addPostHandle,
   shareboard: shareBoardHandle,
   sharesubmit: shareSubmit,
+  deleteboard: deleteBoardModal,
+  deleteboardsubmit: deleteBoardHandle,
   revoke: revokeAccess,
   logout: handleLogout,
 };
@@ -38,6 +40,9 @@ var updateStatus = { board: null, id: null };
 let postModalTemp = document.getElementById("post-modal-template");
 let deleteModalTemp = document.getElementById("delete-modal-template");
 let shareModalTemp = document.getElementById("share-modal-template");
+let deleteBoardModalTemp = document.getElementById(
+  "delete-board-modal-template",
+);
 let pendingDeleteTaskId = null;
 
 // handle dragging on webpage
@@ -421,6 +426,31 @@ async function revokeAccess(userId) {
   }
 }
 
+function deleteBoardModal() {
+  if (currentUserRole != 1) {
+    showNotification("Only the owner can delete the board", true);
+    return;
+  }
+  showTemplateInModal(deleteBoardModalTemp);
+}
+
+async function deleteBoardHandle() {
+  try {
+    const res = await fetchWithAuth(`/api/boards/${boardId}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      window.location.href = "/boards";
+    } else {
+      const err = await res.json();
+      showNotification(err.message, true);
+    }
+  } catch (err) {
+    showNotification("Failed to delete board", true);
+  }
+}
+
 function addPostHandle(status) {
   updateStatus.id = null;
   updateStatus.board = parseInt(status);
@@ -695,7 +725,7 @@ function dragEndHandle(e) {
 document.addEventListener("DOMContentLoaded", () => {
   const currentPath = window.location.pathname.split("/");
   boardId = currentPath[currentPath.length - 1];
-  
+
   loadAllPosts();
   initSSE();
 });

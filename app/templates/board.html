@@ -23,6 +23,7 @@
     </div>
     <div class="navbar-menu">
       <button data-handler="shareboard" class="navbar-button text-md">Share Board</button> 
+      <button data-handler="deleteboard" class="navbar-button text-md">Delete Board</button> 
       <div class="navbar-user-dropdown">
         <button class="navbar-button navbar-user-button" data-handler="usermenubtn">
           <div class="avatar">
@@ -263,6 +264,29 @@
       </div>
     </div>
     <div class="modal-footer">
+    </div>
+  </div>
+</template>
+<template id="delete-board-modal-template">
+  <div class="modal-window">
+    <div class="modal-title">
+      <p class="text-2xl">Delete this board?</p>
+    </div>
+    <div class="modal-content">
+      <span class="text-md">
+        Are you sure you would like to delete this board?
+      </span>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-button text-md" data-handler="deleteboardsubmit">
+        Delete
+      </button>
+      <button
+        class="modal-button modal-button-secondary text-md"
+        data-modal-action="close"
+      >
+        Cancel
+      </button>
     </div>
   </div>
 </template>
