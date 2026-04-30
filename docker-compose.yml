@@ -3,6 +3,8 @@ services:
     image: redis:latest
     container_name: task-tracker-redis
     restart: unless-stopped
+    networks:
+      - task-tracker_internal
   web:
     container_name: task-tracker
     build: .
@@ -14,6 +16,8 @@ services:
       - .env
     depends_on:
       - redis
+    networks:
+      - task-tracker_internal
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${FLASK_PORT}/health"]
@@ -24,3 +28,7 @@ services:
 
 volumes:
   app_data:
+
+networks:
+  task-tracker_internal:
+      driver: bridge
