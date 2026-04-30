@@ -3,6 +3,7 @@ from flask import Blueprint, g, jsonify
 
 from app.db import get_db
 from app.utils.decorators import access_token_required, json_required
+from app.utils.sse import notify_clients
 from app.crud.board import get_board_by_task_id_for_user, check_user_in_board
 from app.crud.task import delete_task, get_task_by_id_for_user, update_task_details
 
@@ -37,7 +38,7 @@ def update_task(id, data):
         return {"message": "You don't have access to this task"}, 400
 
     update_task_details(db, id, data)
-
+    notify_clients(board_id, {"type": "refresh"})
     return jsonify({"message": "Task updated successfully"}), 200
 
 
@@ -55,7 +56,7 @@ def purge_task(id):
         return {"message": "You don't have access to this task"}, 400
 
     delete_task(db, id)
-
+    notify_clients(board_id, {"type": "refresh"})
     return jsonify({"message": "Task deleted successfully"}), 200
 
 

@@ -2,6 +2,7 @@ FROM python:3.14-slim
 
 WORKDIR /app
 
+ARG FLASK_PORT=8000
 ENV PYTHONUNBUFFERED="true" PYTHONDONTWRITEBYTECODE="true"
 
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
@@ -20,7 +21,7 @@ RUN useradd -m -u 1000 appuser
 RUN chown -R appuser:appuser /app
 USER appuser
 
-EXPOSE 8000
+EXPOSE ${FLASK_PORT}
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
@@ -30,4 +31,4 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 # proxy_set_header X-Forwarded-Proto https;
 # proxy_set_header X-Forwarded-Scheme https;
 # to prevent 'Mixed-Content' error when hitting api endpts from frontend
-CMD ["gunicorn", "--forwarded-allow-ips=*" , "--bind", "0.0.0.0:8000", "app.wsgi:app"]
+CMD ["sh", "-c", "gunicorn --worker-class=gthread --workers=${GUNICORN_WORKERS} --threads=${GUNICORN_THREADS} --forwarded-allow-ips=* --bind=0.0.0.0:${FLASK_PORT} app.wsgi:app"]

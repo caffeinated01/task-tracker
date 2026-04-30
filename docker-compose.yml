@@ -1,16 +1,22 @@
 services:
+  redis:
+    image: redis:latest
+    container_name: task-tracker-redis
+    restart: unless-stopped
   web:
     container_name: task-tracker
     build: .
     ports:
-      - "8000:8000"
+      - "${HOST_PORT}:${FLASK_PORT}"
     volumes:
       - app_data:/app/instance
     env_file:
       - .env
+    depends_on:
+      - redis
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:${FLASK_PORT}/health"]
       interval: 1m30s
       timeout: 30s
       retries: 5

@@ -14,6 +14,7 @@ const postTemplate = document.getElementById("task-template");
 const title = document.querySelector("#board-name");
 let boardNameBound = false;
 let boardUsers = [];
+let eventSource = null;
 
 /*
 handle general clicking on webpage, this should cover:
@@ -49,9 +50,6 @@ emptyImg.src =
   "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
 async function loadAllPosts() {
-  const currentPath = window.location.pathname.split("/");
-  boardId = currentPath[currentPath.length - 1];
-
   try {
     const boardResp = await fetchWithAuth(`/api/boards/${boardId}`);
 
@@ -100,6 +98,26 @@ async function fetchBoardUsers() {
     console.log(err);
     return null;
   }
+}
+
+function initSSE() {
+  if (eventSource) {
+    return; // make sure only one connection open at a time
+  }
+
+  eventSource = new EventSource(`/api/boards/${boardId}/stream`);
+
+  eventSource.onmessage = function (event) {
+    try {
+      const data = JSON.parse(event.data);
+      // server sends {type: "refresh"} when theres a change
+      if (data.type === "refresh") {
+        loadAllPosts();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 }
 
 function bindBoardNameInput() {
@@ -674,7 +692,13 @@ function dragEndHandle(e) {
 
 // connect handles
 
-document.addEventListener("DOMContentLoaded", loadAllPosts);
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPath = window.location.pathname.split("/");
+  boardId = currentPath[currentPath.length - 1];
+  
+  loadAllPosts();
+  initSSE();
+});
 document.addEventListener("dragstart", dragStartHandle);
 document.addEventListener("dragover", dragOverHandle);
 document.addEventListener("dragend", dragEndHandle);

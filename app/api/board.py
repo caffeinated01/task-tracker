@@ -1,7 +1,8 @@
-from flask import Blueprint, g, jsonify, request
+from flask import Blueprint, Response, g, jsonify, request
 
 from app.db import get_db
 from app.utils.decorators import access_token_required, json_required
+from app.utils.sse import notify_clients, get_board_stream
 from app.constants import BoardRole
 from app.crud.board import store_board, get_boards_for_user, get_board_by_id_for_user, check_user_in_board, add_user_to_board, remove_user_from_board, get_users_for_board, update_board_name, remove_board
 from app.crud.task import get_tasks_for_board, store_task
@@ -90,6 +91,7 @@ def update_board(id, data):
 
     update_board_name(db, id, name)
 
+    notify_clients(id, {"type": "refresh"})
     return jsonify({"message": "Board updated successfully"})
 
 
@@ -152,6 +154,7 @@ def create_task_for_board(id, data):
     task_id = store_task(db, title, status, content,
                          importance, id, user_id, assigned_to)
 
+    notify_clients(id, {"type": "refresh"})
     return jsonify({"id": task_id, "title": title, "status": status, "content": content, "importance": importance, "board_id": id, "created_by": g.current_user["username"], "assigned_to": assigned_to}), 201
 
 
@@ -239,3 +242,17 @@ def revoke_board_access(id, user_id_to_revoke):
     remove_user_from_board(db, id, user_id_to_revoke)
 
     return jsonify({"message": f"Access revoked for {username_to_revoke}"})
+
+
+@bp.route("/<string:id>/stream", methods=["GET"])
+@access_token_required
+def stream_board_changes(id):
+    user_id = g.current_user["user_id"]
+
+    db = get_db()
+
+    if not check_user_in_board(db, id, user_id):
+        return jsonify({"message": "You don't have access to this board"}), 403
+
+    # we explicitly need to set the mimetype to text/event-stream if not it will default to text/html and the client won't be able to parse the stream
+    return Response(get_board_stream(id), mimetype="text/event-stream")

@@ -3,3 +3,4 @@ pwdlib[argon2]
 python-jose
 python-dotenv
 gunicorn
+redis

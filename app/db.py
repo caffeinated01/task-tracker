@@ -13,6 +13,8 @@ def get_db():
         )
         g.db.row_factory = sqlite3.Row
 
+        g.db.execute('PRAGMA journal_mode=WAL;') # write ahead logging for concurrency (with gunicorn workers)
+
     return g.db
 
 
