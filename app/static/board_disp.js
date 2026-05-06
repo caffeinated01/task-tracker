@@ -523,7 +523,6 @@ function deleteModal() {
 
       pendingDeleteTaskId = null;
       hideModal();
-      loadAllPosts();
       showNotification("Task deleted successfully", false);
     })
     .catch((err) => {
@@ -563,7 +562,6 @@ function submitModal() {
     }).then((resp) => {
       // console.log(resp.json());
       submitModalSuccess();
-      loadAllPosts();
       showNotification("Task created successfully", false);
     });
   } else if (updateStatus.id) {
@@ -582,7 +580,6 @@ function submitModal() {
       headers: { "Content-Type": "application/json" },
     }).then((resp) => {
       submitModalSuccess();
-      loadAllPosts();
       showNotification("Task updated successfully", false);
     });
   } else return;
@@ -707,9 +704,6 @@ function dragEndHandle(e) {
         assigned_to: post.assigned_to,
       }),
       headers: { "Content-Type": "application/json" },
-    }).then((resp) => {
-      // console.log(resp.json());
-      loadAllPosts();
     });
   }
   // console.log(e.target);
