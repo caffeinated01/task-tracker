@@ -21,6 +21,6 @@ def get_board_stream(board_id):
     channel = f"board_{board_id}"
     pubsub.subscribe(channel)
 
-    for message in pubsub.listen():
+    for message in pubsub.listen():  # loop blocks until redis publishes smt
         if message["type"] == "message":
-            yield f"data: {message['data']}\n\n"
+            yield f"data: {message['data']}\n\n" # yield turns function into generator so instead of returning, it can send a value, pause, then continue

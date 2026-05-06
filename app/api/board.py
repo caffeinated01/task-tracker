@@ -255,4 +255,5 @@ def stream_board_changes(id):
         return jsonify({"message": "You don't have access to this board"}), 403
 
     # we explicitly need to set the mimetype to text/event-stream if not it will default to text/html and the client won't be able to parse the stream
+    # flask will iterate over get_board_stream and send each yielded value to the client
     return Response(get_board_stream(id), mimetype="text/event-stream")
